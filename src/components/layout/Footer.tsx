@@ -30,7 +30,16 @@ export function Footer({ dynamicPages = [] }: { dynamicPages?: CustomPageFooterL
           <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
             Premium ready-to-wear clothing and luxury footwear. Precision-crafted trousers, shirts, and hand-finished calfskin shoes — ready for immediate wear.
           </p>
-          <div className="flex items-center gap-4 pt-2">
+          <div className="flex items-center gap-3 pt-2">
+            <a
+              href="mailto:j.veloria.pk@gmail.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-slate-300 hover:text-amber-300 hover:border-amber-300 transition-colors"
+              title="Email Support (j.veloria.pk@gmail.com)"
+            >
+              <Mail className="w-4 h-4 text-amber-400" />
+            </a>
             <a
               href={`https://wa.me/${whatsappNumber}?text=Hello%20J.%20VELORIA`}
               target="_blank"
@@ -45,6 +54,7 @@ export function Footer({ dynamicPages = [] }: { dynamicPages?: CustomPageFooterL
               target="_blank"
               rel="noopener noreferrer"
               className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-slate-300 hover:text-blue-400 hover:border-blue-400 transition-colors"
+              title="Facebook"
             >
               <FaFacebookF className="w-4 h-4" />
             </a>
@@ -53,6 +63,7 @@ export function Footer({ dynamicPages = [] }: { dynamicPages?: CustomPageFooterL
               target="_blank"
               rel="noopener noreferrer"
               className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-slate-300 hover:text-pink-400 hover:border-pink-400 transition-colors"
+              title="Instagram"
             >
               <FaInstagram className="w-4 h-4" />
             </a>

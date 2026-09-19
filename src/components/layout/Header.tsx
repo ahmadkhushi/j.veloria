@@ -42,10 +42,10 @@ export function Header({ dynamicPages = [], isAdmin = false }: HeaderProps) {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 transition-all duration-300">
-      {/* Top Announcement Bar with Social Icons Right-Aligned */}
+      {/* Top Announcement Bar - Clean Single Text Line */}
       <div className="bg-[#020C1B] border-b border-white/10 text-xs text-slate-300 py-2 px-4 md:px-8">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          {/* Top Left Shipping Announcement & Optional Admin Badge */}
+          {/* Top Shipping Announcement & Optional Admin Badge */}
           <div className="flex items-center gap-4 text-[11px] font-medium tracking-widest uppercase text-slate-300">
             <span>FREE SHIPPING ON ORDERS OVER RS. 5000</span>
 
@@ -60,52 +60,6 @@ export function Header({ dynamicPages = [], isAdmin = false }: HeaderProps) {
                 <span className="uppercase font-semibold">Admin Portal</span>
               </Link>
             )}
-          </div>
-
-          {/* Top Right: Contact & Social Icons Aligned to Extreme Right */}
-          <div className="flex items-center gap-4 ml-auto">
-            <span className="hidden sm:inline text-slate-400 tracking-wider font-light text-[11px]">Contact:</span>
-            <div className="flex items-center gap-3">
-              <a
-                href="mailto:j.veloria.pk@gmail.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => {
-                  window.location.href = "mailto:j.veloria.pk@gmail.com";
-                }}
-                className="text-slate-300 hover:text-amber-300 transition-colors p-1 flex items-center justify-center cursor-pointer relative z-50"
-                title="Email Us (j.veloria.pk@gmail.com)"
-              >
-                <Mail className="w-3.5 h-3.5 text-amber-400 hover:scale-110 transition-transform pointer-events-none" />
-              </a>
-              <a
-                href="https://wa.me/923451101520?text=Hello%20J.%20VELORIA"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-300 hover:text-emerald-400 transition-colors p-1 flex items-center justify-center"
-                title="WhatsApp Support (+923451101520)"
-              >
-                <FaWhatsapp className="w-3.5 h-3.5 text-emerald-400 hover:scale-110 transition-transform" />
-              </a>
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-300 hover:text-blue-400 transition-colors p-1 flex items-center justify-center"
-                title="Facebook"
-              >
-                <FaFacebookF className="w-3.5 h-3.5 hover:scale-110 transition-transform" />
-              </a>
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-300 hover:text-pink-400 transition-colors p-1 flex items-center justify-center"
-                title="Instagram"
-              >
-                <FaInstagram className="w-3.5 h-3.5 hover:scale-110 transition-transform" />
-              </a>
-            </div>
           </div>
         </div>
       </div>
