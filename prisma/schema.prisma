@@ -1,0 +1,142 @@
+// Prisma schema for j.viloria — Luxury Clothing & Shoes Platform
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now())
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model Category {
+  id          Int        @id @default(autoincrement())
+  name        String
+  slug        String     @unique
+  description String?    @db.Text
+  imageUrl    String?
+  department  String     @default("CLOTHES") // "CLOTHES" | "SHOES" | "BOTH"
+  parentId    Int?
+  parent      Category?  @relation("SubCategories", fields: [parentId], references: [id])
+  children    Category[] @relation("SubCategories")
+  products    Product[]
+  createdAt   DateTime   @default(now())
+}
+
+model Product {
+  id             Int       @id @default(autoincrement())
+  name           String
+  slug           String    @unique
+  description    String?   @db.Text
+  price          Float
+  salePrice      Float?
+  imageUrl       String?   @db.Text
+  videoUrl       String?
+  brand          String?   @default("j.viloria")
+  department     String    @default("CLOTHES") // "CLOTHES" | "SHOES"
+  categoryId     Int?
+  category       Category? @relation(fields: [categoryId], references: [id])
+  availableSizes Json?     // Array of sizes e.g. ["S", "M", "L", "XL"] or ["EU 40", "EU 41", "EU 42"]
+  isActive       Boolean   @default(true)
+  isNewArrival   Boolean   @default(false)
+  isBestSeller   Boolean   @default(false)
+  isFeatured     Boolean   @default(false)
+  stock          Int       @default(50)
+  colors         Json?     // Array of { name, hex, inStock }
+  keywords       String?
+  reviews        Review[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model SizeOption {
+  id        Int      @id @default(autoincrement())
+  type      String   // "CLOTHING" | "FOOTWEAR"
+  label     String   // e.g., "Small (S)", "EU 42"
+  code      String   // e.g., "S", "EU 42"
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model CustomPage {
+  id              Int      @id @default(autoincrement())
+  title           String
+  slug            String   @unique
+  content         String   @db.Text
+  metaTitle       String?
+  metaDescription String?  @db.Text
+  isPublished     Boolean  @default(true)
+  showInHeader    Boolean  @default(true)
+  showInFooter    Boolean  @default(true)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Order {
+  id            Int         @id @default(autoincrement())
+  orderRef      String      @unique
+  customerName  String
+  phone         String
+  address       String      @db.Text
+  city          String      @default("N/A")
+  paymentMethod String      @default("cod") // 'cod' | 'bank'
+  status        OrderStatus @default(PENDING)
+  total         Float
+  items         Json        // JSON array of { id, name, price, quantity, image, selectedSize, selectedColor }
+  replaceReason String?
+  complaints    Complaint[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+enum OrderStatus {
+  PENDING
+  PLACED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  RETURNED
+  CANCELLED
+}
+
+model Complaint {
+  id            Int             @id @default(autoincrement())
+  orderId       Int?
+  order         Order?          @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  customerEmail String
+  customerName  String?
+  message       String          @db.Text
+  status        ComplaintStatus @default(OPEN)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+enum ComplaintStatus {
+  OPEN
+  RESOLVED
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  productId  Int
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  authorName String
+  rating     Int      @default(5)
+  comment    String   @db.Text
+  isApproved Boolean  @default(true)
+  createdAt  DateTime @default(now())
+}

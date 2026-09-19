@@ -1,0 +1,3 @@
+# j.viloria Luxury Fashion Robots configuration
+User-agent: *
+Allow: /
