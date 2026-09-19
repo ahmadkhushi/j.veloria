@@ -144,7 +144,7 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 preserve-3d">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 preserve-3d">
           {regularProducts.map((prod) => {
             const sizes = Array.isArray(prod.availableSizes) ? (prod.availableSizes as string[]) : [];
             return (
@@ -153,31 +153,31 @@ export default async function HomePage() {
                 className="group bg-[#0A192F] border border-white/10 flex flex-col justify-between card-3d shimmer-3d transform-gpu shadow-xl"
               >
                 <div>
-                  {/* Reduced Image Height: h-52 */}
-                  <div className="relative h-52 w-full overflow-hidden bg-[#020C1B]">
+                  {/* Reduced Image Height for Mobile (h-36 sm:h-52) */}
+                  <div className="relative h-36 sm:h-52 w-full overflow-hidden bg-[#020C1B]">
                     <Image
                       src={prod.imageUrl || '/placeholder.png'}
                       alt={prod.name}
                       fill
                       className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                     />
-                    <div className="absolute top-2.5 left-2.5 bg-[#020C1B]/90 border border-white/20 text-white text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider layer-depth-1 shadow-lg">
+                    <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 bg-[#020C1B]/90 border border-white/20 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 uppercase tracking-wider layer-depth-1 shadow-lg">
                       {prod.department}
                     </div>
                   </div>
 
-                  <div className="p-4 space-y-2 layer-depth-1">
-                    <p className="text-[10px] uppercase tracking-widest text-slate-400 font-semibold">{prod.brand}</p>
-                    <h3 className="font-serif text-sm font-semibold text-white group-hover:text-amber-300 transition-colors line-clamp-1">
+                  <div className="p-2.5 sm:p-4 space-y-1.5 sm:space-y-2 layer-depth-1">
+                    <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-slate-400 font-semibold">{prod.brand}</p>
+                    <h3 className="font-serif text-xs sm:text-sm font-semibold text-white group-hover:text-amber-300 transition-colors line-clamp-1">
                       {prod.name}
                     </h3>
 
                     {sizes.length > 0 && (
-                      <div className="flex items-center gap-1.5 pt-1">
-                        <span className="text-[10px] text-slate-400 uppercase tracking-wider">Sizes:</span>
+                      <div className="flex items-center gap-1 pt-0.5">
+                        <span className="hidden sm:inline text-[10px] text-slate-400 uppercase tracking-wider">Sizes:</span>
                         <div className="flex flex-wrap gap-1">
-                          {sizes.slice(0, 4).map((s) => (
-                            <span key={s} className="text-[10px] bg-[#112240] px-1.5 py-0.5 border border-white/10 text-slate-300">
+                          {sizes.slice(0, 3).map((s) => (
+                            <span key={s} className="text-[9px] sm:text-[10px] bg-[#112240] px-1 py-0.5 border border-white/10 text-slate-300">
                               {s}
                             </span>
                           ))}
@@ -185,19 +185,19 @@ export default async function HomePage() {
                       </div>
                     )}
 
-                    <div className="flex items-baseline gap-2 pt-1">
-                      <span className="font-serif text-base font-bold text-white">${prod.price.toLocaleString()}</span>
+                    <div className="flex items-baseline gap-1.5 pt-0.5">
+                      <span className="font-serif text-sm sm:text-base font-bold text-white">${prod.price.toLocaleString()}</span>
                       {prod.salePrice && (
-                        <span className="text-xs text-slate-500 line-through">${prod.salePrice.toLocaleString()}</span>
+                        <span className="text-[10px] sm:text-xs text-slate-500 line-through">${prod.salePrice.toLocaleString()}</span>
                       )}
                     </div>
                   </div>
                 </div>
 
-                <div className="p-4 pt-0 layer-depth-2">
+                <div className="p-2.5 sm:p-4 pt-0 layer-depth-2">
                   <Link
                     href={`/product/${prod.slug}`}
-                    className="w-full flex items-center justify-center gap-2 py-2 bg-white/10 border border-white/20 text-white font-semibold text-xs uppercase tracking-widest hover:bg-white hover:text-[#0A192F] transition-all duration-300 shadow-md hover:shadow-xl"
+                    className="w-full flex items-center justify-center gap-1.5 py-1.5 sm:py-2 bg-white/10 border border-white/20 text-white font-semibold text-[10px] sm:text-xs uppercase tracking-widest hover:bg-white hover:text-[#0A192F] transition-all duration-300 shadow-md hover:shadow-xl"
                   >
                     View Details
                   </Link>
