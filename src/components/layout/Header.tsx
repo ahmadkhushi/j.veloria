@@ -47,7 +47,7 @@ export function Header({ dynamicPages = [], isAdmin = false }: HeaderProps) {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Top Shipping Announcement & Optional Admin Badge */}
           <div className="flex items-center gap-4 text-[11px] font-medium tracking-widest uppercase text-slate-300">
-            <span>FREE SHIPPING ON ORDERS OVER RS. 5000</span>
+            <span>FREE SHIPPING ACROSS PAKISTAN ON ORDERS OVER RS. 5000</span>
 
             {/* Admin Portal Link: ONLY VISIBLE TO LOGGED-IN ADMIN */}
             {isAdmin && (

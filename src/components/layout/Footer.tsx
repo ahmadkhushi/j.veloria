@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { FaWhatsapp, FaFacebookF, FaInstagram } from 'react-icons/fa';
-import { ArrowRight, Truck, Mail } from 'lucide-react';
+import { ArrowRight, Truck, Mail, MapPin } from 'lucide-react';
 
 interface CustomPageFooterLink {
   id: number;
@@ -30,6 +30,10 @@ export function Footer({ dynamicPages = [] }: { dynamicPages?: CustomPageFooterL
           <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
             Premium ready-to-wear clothing and luxury footwear. Precision-crafted trousers, shirts, and hand-finished calfskin shoes — ready for immediate wear.
           </p>
+          <div className="flex items-center gap-2 text-xs text-slate-300 font-medium pt-1">
+            <MapPin className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+            <span>Faisalabad, Pakistan</span>
+          </div>
           <div className="flex items-center gap-3 pt-2">
             <a
               href="mailto:j.veloria.pk@gmail.com"

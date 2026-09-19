@@ -199,7 +199,7 @@ export function ProductDetailClient({ product }: { product: ProductProps }) {
         <div className="grid grid-cols-3 gap-2 pt-4 border-t border-white/10 text-[11px] text-slate-400">
           <div className="flex items-center gap-2">
             <Truck className="w-4 h-4 text-white" />
-            <span>Global Express Shipping</span>
+            <span>Express Pakistan Delivery</span>
           </div>
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-white" />

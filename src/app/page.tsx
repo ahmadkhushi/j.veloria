@@ -55,8 +55,8 @@ export default async function HomePage() {
           </div>
           <div className="flex flex-col items-center space-y-2 p-4 card-3d shimmer-3d group cursor-default">
             <Sparkles className="w-6 h-6 text-slate-300 stroke-1 group-hover:scale-125 group-hover:text-amber-300 transition-all duration-500 layer-depth-2" />
-            <h3 className="font-serif text-sm uppercase tracking-widest text-white font-semibold group-hover:text-amber-300 transition-colors layer-depth-1">Priority Global Delivery</h3>
-            <p className="text-xs text-slate-400 leading-relaxed layer-depth-1">Enjoy fast, complimentary shipping straight to your doorstep, backed by our dedicated premium customer support.</p>
+            <h3 className="font-serif text-sm uppercase tracking-widest text-white font-semibold group-hover:text-amber-300 transition-colors layer-depth-1">Priority Pakistan Delivery</h3>
+            <p className="text-xs text-slate-400 leading-relaxed layer-depth-1">Enjoy fast, complimentary shipping across Pakistan straight to your doorstep, backed by our dedicated premium customer support.</p>
           </div>
         </div>
       </section>

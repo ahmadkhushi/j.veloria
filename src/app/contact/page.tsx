@@ -109,8 +109,8 @@ export default function ContactPage() {
             <div className="flex items-start gap-3 text-xs text-slate-300">
               <MapPin className="w-4 h-4 text-white mt-0.5 flex-shrink-0" />
               <div>
-                <p className="font-semibold text-white">Global Headquarters</p>
-                <p className="text-slate-400">Via Toledo 180, Naples, Italy</p>
+                <p className="font-semibold text-white">Headquarters & Flagship Location</p>
+                <p className="text-slate-400">Faisalabad, Pakistan</p>
               </div>
             </div>
             <div className="flex items-center gap-3 text-xs text-slate-300">

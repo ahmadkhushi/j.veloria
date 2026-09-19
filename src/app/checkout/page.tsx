@@ -15,7 +15,7 @@ export default function CheckoutPage() {
     customerName: '',
     phone: '',
     address: '',
-    city: 'Naples',
+    city: 'Faisalabad',
     paymentMethod: 'cod',
   });
   const [submitting, setSubmitting] = useState(false);
@@ -112,7 +112,7 @@ export default function CheckoutPage() {
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   className="w-full bg-[#020C1B] border border-white/20 p-3 text-xs text-white focus:outline-none focus:border-white"
-                  placeholder="+1 (555) 019-2831"
+                  placeholder="03451101520"
                 />
               </div>
 
