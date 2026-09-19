@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, Shirt, Footprints, ShoppingBag, PhoneCall } from 'lucide-react';
@@ -9,7 +9,13 @@ import { useCartStore } from '@/lib/cart-store';
 export function MobileNav() {
   const pathname = usePathname();
   const { getTotalCount, openCart } = useCartStore();
-  const itemCount = getTotalCount();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const itemCount = mounted ? getTotalCount() : 0;
 
   const navItems = [
     { label: 'Home', href: '/', icon: Home },
@@ -23,7 +29,7 @@ export function MobileNav() {
       <div className="flex items-center justify-around">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href;
+          const isActive = pathname ? pathname === item.href : false;
           return (
             <Link
               key={item.href}

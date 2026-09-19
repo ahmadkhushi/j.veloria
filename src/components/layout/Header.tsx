@@ -4,8 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCartStore } from '@/lib/cart-store';
-import { ShoppingBag, Search, Menu, X, ShieldCheck, Truck, Mail } from 'lucide-react';
-import { FaWhatsapp, FaFacebookF, FaInstagram } from 'react-icons/fa';
+import { ShoppingBag, Search, Menu, X, ShieldCheck, Truck } from 'lucide-react';
 
 interface CustomPageHeaderLink {
   id: number;
@@ -25,9 +24,16 @@ export function Header({ dynamicPages = [], isAdmin = false }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const itemCount = getTotalCount();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const itemCount = mounted ? getTotalCount() : 0;
 
   const isActive = (path: string) => {
+    if (!pathname) return false;
     if (path === '/') return pathname === '/';
     return pathname === path || pathname.startsWith(path + '/');
   };
