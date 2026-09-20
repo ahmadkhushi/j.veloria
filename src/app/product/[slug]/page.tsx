@@ -11,11 +11,19 @@ interface ProductPageProps {
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
+  const cleanSlug = decodeURIComponent(slug || '').toLowerCase().trim();
 
-  const product = await prisma.product.findUnique({
-    where: { slug },
+  let product = await prisma.product.findUnique({
+    where: { slug: cleanSlug },
     include: { category: true },
   });
+
+  if (!product) {
+    product = await prisma.product.findFirst({
+      where: { slug: { equals: cleanSlug } },
+      include: { category: true },
+    });
+  }
 
   if (!product || !product.isActive) {
     notFound();

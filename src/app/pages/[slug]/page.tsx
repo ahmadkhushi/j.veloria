@@ -25,10 +25,17 @@ export async function generateMetadata({ params }: CustomPageProps): Promise<Met
 
 export default async function CustomDynamicPage({ params }: CustomPageProps) {
   const { slug } = await params;
+  const cleanSlug = decodeURIComponent(slug || '').toLowerCase().trim();
 
-  const page = await prisma.customPage.findUnique({
-    where: { slug },
+  let page = await prisma.customPage.findUnique({
+    where: { slug: cleanSlug },
   });
+
+  if (!page) {
+    page = await prisma.customPage.findFirst({
+      where: { slug: { equals: cleanSlug } },
+    });
+  }
 
   if (!page || !page.isPublished) {
     notFound();
