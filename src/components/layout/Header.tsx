@@ -48,11 +48,11 @@ export function Header({ dynamicPages = [], isAdmin = false }: HeaderProps) {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 transition-all duration-300">
-      {/* Top Announcement Bar - Clean Single Text Line */}
-      <div className="bg-[#020C1B] border-b border-white/10 text-xs text-slate-300 py-2 px-4 md:px-8">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+      {/* Top Announcement Bar - Clean Centered Text Line */}
+      <div className="bg-[#020C1B] border-b border-white/10 text-xs text-slate-300 py-2 px-4 md:px-8 text-center">
+        <div className="max-w-7xl mx-auto flex items-center justify-center text-center">
           {/* Top Shipping Announcement & Optional Admin Badge */}
-          <div className="flex items-center gap-4 text-[10px] sm:text-[11px] font-medium tracking-wider sm:tracking-widest uppercase text-slate-300">
+          <div className="flex items-center justify-center gap-4 text-[10px] sm:text-[11px] font-medium tracking-wider sm:tracking-widest uppercase text-slate-300 text-center w-full">
             <span>FREE SHIPPING IN PAKISTAN OVER RS. 5000</span>
 
             {/* Admin Portal Link: ONLY VISIBLE TO LOGGED-IN ADMIN */}
