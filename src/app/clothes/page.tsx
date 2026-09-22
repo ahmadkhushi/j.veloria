@@ -3,6 +3,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 interface SearchParamsProps {
   searchParams: Promise<{
     category?: string;
@@ -18,17 +20,6 @@ export default async function ClothesHubPage({ searchParams }: SearchParamsProps
   const sizeFilter = params.size || '';
   const sortFilter = params.sort || 'newest';
   const searchQuery = params.search || '';
-
-  // Fetch clothing categories
-  const categories = await prisma.category.findMany({
-    where: { department: 'CLOTHES' },
-  });
-
-  // Fetch clothing size options
-  const clothingSizes = await prisma.sizeOption.findMany({
-    where: { type: 'CLOTHING', isActive: true },
-    orderBy: { sortOrder: 'asc' },
-  });
 
   // Build query filter
   const whereCondition: any = {
@@ -52,13 +43,28 @@ export default async function ClothesHubPage({ searchParams }: SearchParamsProps
   if (sortFilter === 'price_asc') orderBy = { price: 'asc' };
   if (sortFilter === 'price_desc') orderBy = { price: 'desc' };
 
-  let products = await prisma.product.findMany({
-    where: whereCondition,
-    include: { category: true },
-    orderBy,
-  });
+  let categories: any[] = [];
+  let clothingSizes: any[] = [];
+  let products: any[] = [];
 
-  if (sizeFilter) {
+  try {
+    categories = await prisma.category.findMany({
+      where: { department: 'CLOTHES' },
+    });
+    clothingSizes = await prisma.sizeOption.findMany({
+      where: { type: 'CLOTHING', isActive: true },
+      orderBy: { sortOrder: 'asc' },
+    });
+    products = await prisma.product.findMany({
+      where: whereCondition,
+      include: { category: true },
+      orderBy,
+    });
+  } catch (error) {
+    console.error('Database query error on ClothesHubPage:', error);
+  }
+
+  if (sizeFilter && products.length > 0) {
     products = products.filter((p) => {
       const sizes = Array.isArray(p.availableSizes) ? (p.availableSizes as string[]) : [];
       return sizes.includes(sizeFilter);
@@ -179,9 +185,9 @@ export default async function ClothesHubPage({ searchParams }: SearchParamsProps
                     )}
 
                     <div className="flex items-baseline gap-1.5 pt-0.5">
-                      <span className="font-serif text-sm sm:text-base font-bold text-white">${prod.price.toLocaleString()}</span>
+                      <span className="font-serif text-sm sm:text-base font-bold text-white">Rs. {prod.price.toLocaleString()}</span>
                       {prod.salePrice && (
-                        <span className="text-[10px] sm:text-xs text-slate-500 line-through">${prod.salePrice.toLocaleString()}</span>
+                        <span className="text-[10px] sm:text-xs text-slate-500 line-through">Rs. {prod.salePrice.toLocaleString()}</span>
                       )}
                     </div>
                   </div>

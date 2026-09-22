@@ -186,9 +186,9 @@ export default async function HomePage() {
                     )}
 
                     <div className="flex items-baseline gap-1.5 pt-0.5">
-                      <span className="font-serif text-sm sm:text-base font-bold text-white">${prod.price.toLocaleString()}</span>
+                      <span className="font-serif text-sm sm:text-base font-bold text-white">Rs. {prod.price.toLocaleString()}</span>
                       {prod.salePrice && (
-                        <span className="text-[10px] sm:text-xs text-slate-500 line-through">${prod.salePrice.toLocaleString()}</span>
+                        <span className="text-[10px] sm:text-xs text-slate-500 line-through">Rs. {prod.salePrice.toLocaleString()}</span>
                       )}
                     </div>
                   </div>

@@ -285,6 +285,7 @@ export function Header({ dynamicPages = [], isAdmin = false }: HeaderProps) {
               Track Order
             </Link>
             {dynamicPages.map((page) => {
+              if (!page || !page.slug) return null;
               const pagePath = `/pages/${page.slug}`;
               const active = isActive(pagePath);
               return (

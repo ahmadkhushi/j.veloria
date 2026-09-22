@@ -119,9 +119,9 @@ export function SideScrollCarousel({ products }: { products: SideScrollProduct[]
                   )}
 
                   <div className="flex items-baseline gap-2 pt-1">
-                    <span className="font-serif text-base font-bold text-white">${prod.price.toLocaleString()}</span>
+                    <span className="font-serif text-base font-bold text-white">Rs. {prod.price.toLocaleString()}</span>
                     {prod.salePrice && (
-                      <span className="text-xs text-slate-500 line-through">${prod.salePrice.toLocaleString()}</span>
+                      <span className="text-xs text-slate-500 line-through">Rs. {prod.salePrice.toLocaleString()}</span>
                     )}
                   </div>
                 </div>

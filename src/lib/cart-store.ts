@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage, StateStorage } from 'zustand/middleware';
 
 export interface CartItem {
   id: number;
@@ -26,6 +26,35 @@ interface CartStore {
   getTotalCount: () => number;
   getTotalPrice: () => number;
 }
+
+const safeStorage: StateStorage = {
+  getItem: (name: string) => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        return window.localStorage.getItem(name);
+      }
+    } catch (e) {
+      // Return null safely if localStorage is restricted
+    }
+    return null;
+  },
+  setItem: (name: string, value: string) => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem(name, value);
+      }
+    } catch (e) {
+      // Ignore quota or security errors gracefully
+    }
+  },
+  removeItem: (name: string) => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.removeItem(name);
+      }
+    } catch (e) {}
+  },
+};
 
 export const useCartStore = create<CartStore>()(
   persist(
@@ -78,6 +107,7 @@ export const useCartStore = create<CartStore>()(
     }),
     {
       name: 'j_viloria_cart',
+      storage: createJSONStorage(() => safeStorage),
     }
   )
 );

@@ -8,8 +8,15 @@ import Image from 'next/image';
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const { items, getTotalPrice, clearCart } = useCartStore();
-  const total = getTotalPrice();
+  const activeItems = mounted ? items : [];
+  const total = mounted ? getTotalPrice() : 0;
 
   const [formData, setFormData] = useState({
     customerName: '',
@@ -21,7 +28,7 @@ export default function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  if (items.length === 0) {
+  if (!mounted || activeItems.length === 0) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-20 text-center space-y-4">
         <h1 className="text-2xl font-serif text-white uppercase">Your Bag is Empty</h1>

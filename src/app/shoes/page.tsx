@@ -3,6 +3,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 interface SearchParamsProps {
   searchParams: Promise<{
     category?: string;
@@ -18,17 +20,6 @@ export default async function ShoesHubPage({ searchParams }: SearchParamsProps) 
   const sizeFilter = params.size || '';
   const sortFilter = params.sort || 'newest';
   const searchQuery = params.search || '';
-
-  // Fetch footwear categories
-  const categories = await prisma.category.findMany({
-    where: { department: 'SHOES' },
-  });
-
-  // Fetch shoe size options
-  const shoeSizes = await prisma.sizeOption.findMany({
-    where: { type: 'FOOTWEAR', isActive: true },
-    orderBy: { sortOrder: 'asc' },
-  });
 
   // Build query filter
   const whereCondition: any = {
@@ -52,13 +43,28 @@ export default async function ShoesHubPage({ searchParams }: SearchParamsProps) 
   if (sortFilter === 'price_asc') orderBy = { price: 'asc' };
   if (sortFilter === 'price_desc') orderBy = { price: 'desc' };
 
-  let products = await prisma.product.findMany({
-    where: whereCondition,
-    include: { category: true },
-    orderBy,
-  });
+  let categories: any[] = [];
+  let shoeSizes: any[] = [];
+  let products: any[] = [];
 
-  if (sizeFilter) {
+  try {
+    categories = await prisma.category.findMany({
+      where: { department: 'SHOES' },
+    });
+    shoeSizes = await prisma.sizeOption.findMany({
+      where: { type: 'FOOTWEAR', isActive: true },
+      orderBy: { sortOrder: 'asc' },
+    });
+    products = await prisma.product.findMany({
+      where: whereCondition,
+      include: { category: true },
+      orderBy,
+    });
+  } catch (error) {
+    console.error('Database query error on ShoesHubPage:', error);
+  }
+
+  if (sizeFilter && products.length > 0) {
     products = products.filter((p) => {
       const sizes = Array.isArray(p.availableSizes) ? (p.availableSizes as string[]) : [];
       return sizes.includes(sizeFilter);

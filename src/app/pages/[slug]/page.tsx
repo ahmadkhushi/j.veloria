@@ -9,32 +9,44 @@ interface CustomPageProps {
   }>;
 }
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({ params }: CustomPageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const page = await prisma.customPage.findUnique({
-    where: { slug },
-  });
+  try {
+    const { slug } = await params;
+    const page = await prisma.customPage.findUnique({
+      where: { slug },
+    });
 
-  if (!page) return { title: 'Page Not Found | J. VELORIA' };
+    if (!page) return { title: 'Page Not Found | J. VELORIA' };
 
-  return {
-    title: page.metaTitle || `${page.title} | J. VELORIA`,
-    description: page.metaDescription || `Read ${page.title} on J. VELORIA luxury fashion platform.`,
-  };
+    return {
+      title: page.metaTitle || `${page.title} | J. VELORIA`,
+      description: page.metaDescription || `Read ${page.title} on J. VELORIA luxury fashion platform.`,
+    };
+  } catch (e) {
+    return { title: 'J. VELORIA Luxury Ready-to-Wear' };
+  }
 }
 
 export default async function CustomDynamicPage({ params }: CustomPageProps) {
   const { slug } = await params;
   const cleanSlug = decodeURIComponent(slug || '').toLowerCase().trim();
 
-  let page = await prisma.customPage.findUnique({
-    where: { slug: cleanSlug },
-  });
+  let page: any = null;
 
-  if (!page) {
-    page = await prisma.customPage.findFirst({
-      where: { slug: { equals: cleanSlug } },
+  try {
+    page = await prisma.customPage.findUnique({
+      where: { slug: cleanSlug },
     });
+
+    if (!page) {
+      page = await prisma.customPage.findFirst({
+        where: { slug: { equals: cleanSlug } },
+      });
+    }
+  } catch (error) {
+    console.error('Database error in CustomDynamicPage:', error);
   }
 
   if (!page || !page.isPublished) {

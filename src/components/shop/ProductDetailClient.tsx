@@ -104,9 +104,9 @@ export function ProductDetailClient({ product }: { product: ProductProps }) {
           <h1 className="text-3xl font-serif text-white uppercase tracking-wide mt-2">{product.name}</h1>
 
           <div className="flex items-baseline gap-3 mt-4">
-            <span className="text-2xl font-serif font-bold text-white">${product.price.toLocaleString()}</span>
+            <span className="text-2xl font-serif font-bold text-white">Rs. {product.price.toLocaleString()}</span>
             {product.salePrice && (
-              <span className="text-sm text-slate-500 line-through">${product.salePrice.toLocaleString()}</span>
+              <span className="text-sm text-slate-500 line-through">Rs. {product.salePrice.toLocaleString()}</span>
             )}
           </div>
         </div>

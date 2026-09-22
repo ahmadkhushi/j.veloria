@@ -13,6 +13,11 @@ interface CustomPageFooterLink {
 
 export function Footer({ dynamicPages = [] }: { dynamicPages?: CustomPageFooterLink[] }) {
   const whatsappNumber = '923451101520';
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <footer className="bg-[#020C1B] text-slate-300 border-t border-white/10 pt-16 pb-24 lg:pb-12 px-4 md:px-8">
@@ -158,7 +163,7 @@ export function Footer({ dynamicPages = [] }: { dynamicPages?: CustomPageFooterL
       </div>
 
       <div className="max-w-7xl mx-auto border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between text-xs text-slate-400 gap-4">
-        <p>© {new Date().getFullYear()} J. VELORIA Luxury Ready-to-Wear. All Rights Reserved.</p>
+        <p>© {mounted ? new Date().getFullYear() : 2026} J. VELORIA Luxury Ready-to-Wear. All Rights Reserved.</p>
         <div className="flex space-x-6 text-[11px]">
           <span>Privacy Policy</span>
           <span>Terms of Service</span>

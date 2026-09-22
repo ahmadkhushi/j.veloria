@@ -7,9 +7,15 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 export function CartDrawer() {
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const { items, isOpen, closeCart, removeItem, updateQuantity, getTotalPrice } = useCartStore();
 
-  if (!isOpen) return null;
+  if (!mounted || !isOpen) return null;
 
   const total = getTotalPrice();
 

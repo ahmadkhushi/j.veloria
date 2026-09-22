@@ -7,10 +7,17 @@ import { useCartStore } from '@/lib/cart-store';
 import { Trash2, ShoppingBag, ArrowRight, ArrowLeft } from 'lucide-react';
 
 export default function CartPage() {
-  const { items, removeItem, updateQuantity, getTotalPrice, clearCart } = useCartStore();
-  const total = getTotalPrice();
+  const [mounted, setMounted] = React.useState(false);
 
-  if (items.length === 0) {
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const { items, removeItem, updateQuantity, getTotalPrice, clearCart } = useCartStore();
+  const activeItems = mounted ? items : [];
+  const total = mounted ? getTotalPrice() : 0;
+
+  if (!mounted || activeItems.length === 0) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center space-y-6">
         <ShoppingBag className="w-16 h-16 text-slate-600 mx-auto stroke-1" />

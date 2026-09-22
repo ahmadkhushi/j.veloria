@@ -79,13 +79,15 @@
   will-change: transform;
 }
 
-.card-3d:hover {
-  transform: translateY(-8px) rotateX(4deg) rotateY(-2deg) scale(1.02);
-  box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 0.85),
-    0 0 30px rgba(255, 255, 255, 0.08),
-    inset 0 1px 1px rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.35);
+@media (hover: hover) {
+  .card-3d:hover {
+    transform: translateY(-8px) rotateX(4deg) rotateY(-2deg) scale(1.02);
+    box-shadow: 
+      0 25px 50px -12px rgba(0, 0, 0, 0.85),
+      0 0 30px rgba(255, 255, 255, 0.08),
+      inset 0 1px 1px rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.35);
+  }
 }
 
 .hero-3d-title {
