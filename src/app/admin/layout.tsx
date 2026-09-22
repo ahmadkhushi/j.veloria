@@ -78,6 +78,12 @@ export default async function AdminLayout({
           >
             <ArrowLeft className="w-4 h-4" /> View Storefront
           </Link>
+          <a
+            href="/api/admin/logout"
+            className="flex items-center gap-2 text-red-400 hover:text-red-300 uppercase tracking-wider pt-2"
+          >
+            <LogOut className="w-4 h-4" /> Logout Session
+          </a>
         </div>
       </aside>
 

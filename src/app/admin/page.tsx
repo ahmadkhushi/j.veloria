@@ -3,25 +3,47 @@ import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { ShoppingBag, Ruler, FileText, ShoppingCart, DollarSign, TrendingUp } from 'lucide-react';
 
-export default async function AdminOverviewPage() {
-  const [productCount, clothesCount, shoesCount, sizeCount, pagesCount, orderCount, totalRevenueResult] =
-    await Promise.all([
-      prisma.product.count({ where: { isActive: true } }),
-      prisma.product.count({ where: { department: 'CLOTHES', isActive: true } }),
-      prisma.product.count({ where: { department: 'SHOES', isActive: true } }),
-      prisma.sizeOption.count({ where: { isActive: true } }),
-      prisma.customPage.count({ where: { isPublished: true } }),
-      prisma.order.count(),
-      prisma.order.aggregate({
-        _sum: { total: true },
-      }),
-    ]);
+export const dynamic = 'force-dynamic';
 
-  const totalRevenue = totalRevenueResult._sum.total || 0;
-  const recentOrders = await prisma.order.findMany({
-    take: 5,
-    orderBy: { createdAt: 'desc' },
-  });
+export default async function AdminOverviewPage() {
+  let productCount = 0;
+  let clothesCount = 0;
+  let shoesCount = 0;
+  let sizeCount = 0;
+  let pagesCount = 0;
+  let orderCount = 0;
+  let totalRevenue = 0;
+  let recentOrders: any[] = [];
+
+  try {
+    const [pCount, cCount, sCount, szCount, pgCount, oCount, totalRevenueResult, rOrders] =
+      await Promise.all([
+        prisma.product.count({ where: { isActive: true } }),
+        prisma.product.count({ where: { department: 'CLOTHES', isActive: true } }),
+        prisma.product.count({ where: { department: 'SHOES', isActive: true } }),
+        prisma.sizeOption.count({ where: { isActive: true } }),
+        prisma.customPage.count({ where: { isPublished: true } }),
+        prisma.order.count(),
+        prisma.order.aggregate({
+          _sum: { total: true },
+        }),
+        prisma.order.findMany({
+          take: 5,
+          orderBy: { createdAt: 'desc' },
+        }),
+      ]);
+
+    productCount = pCount;
+    clothesCount = cCount;
+    shoesCount = sCount;
+    sizeCount = szCount;
+    pagesCount = pgCount;
+    orderCount = oCount;
+    totalRevenue = totalRevenueResult._sum.total || 0;
+    recentOrders = rOrders;
+  } catch (error) {
+    console.error('Database query error on AdminOverviewPage:', error);
+  }
 
   return (
     <div className="space-y-8">
