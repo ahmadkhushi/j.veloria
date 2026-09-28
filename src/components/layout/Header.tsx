@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCartStore } from '@/lib/cart-store';
-import { ShoppingBag, Search, Menu, X, ShieldCheck, Truck } from 'lucide-react';
+import { ShoppingBag, Search, Menu, X, Truck } from 'lucide-react';
 
 interface CustomPageHeaderLink {
   id: number;
@@ -14,10 +14,9 @@ interface CustomPageHeaderLink {
 
 interface HeaderProps {
   dynamicPages?: CustomPageHeaderLink[];
-  isAdmin?: boolean;
 }
 
-export function Header({ dynamicPages = [], isAdmin = false }: HeaderProps) {
+export function Header({ dynamicPages = [] }: HeaderProps) {
   const { getTotalCount, openCart } = useCartStore();
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -51,21 +50,9 @@ export function Header({ dynamicPages = [], isAdmin = false }: HeaderProps) {
       {/* Top Announcement Bar - Clean Centered Text Line */}
       <div className="bg-[#020C1B] border-b border-white/10 text-xs text-slate-300 py-2 px-4 md:px-8 text-center">
         <div className="max-w-7xl mx-auto flex items-center justify-center text-center">
-          {/* Top Shipping Announcement & Optional Admin Badge */}
+          {/* Top Shipping Announcement */}
           <div className="flex items-center justify-center gap-4 text-[10px] sm:text-[11px] font-medium tracking-wider sm:tracking-widest uppercase text-slate-300 text-center w-full">
             <span>FREE SHIPPING IN PAKISTAN OVER RS. 5000</span>
-
-            {/* Admin Portal Link: ONLY VISIBLE TO LOGGED-IN ADMIN */}
-            {isAdmin && (
-              <Link
-                href="/admin"
-                className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 bg-amber-500/10 border border-amber-500/30 text-amber-300 hover:bg-amber-500/20 transition-all text-[10px] tracking-wider rounded-sm ml-2"
-                title="Admin Dashboard"
-              >
-                <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-                <span className="uppercase font-semibold">Admin Portal</span>
-              </Link>
-            )}
           </div>
         </div>
       </div>
@@ -152,9 +139,11 @@ export function Header({ dynamicPages = [], isAdmin = false }: HeaderProps) {
               </Link>
 
               {/* Dynamic Custom Pages Links */}
-              {dynamicPages.map((page) => {
-                const pagePath = `/pages/${page.slug}`;
-                const active = isActive(pagePath);
+              {dynamicPages
+                .filter((page) => page && page.slug && !page.slug.toLowerCase().includes('admin') && !page.title.toLowerCase().includes('admin'))
+                .map((page) => {
+                  const pagePath = `/pages/${page.slug}`;
+                  const active = isActive(pagePath);
                 return (
                   <Link
                     key={page.id}
@@ -284,10 +273,11 @@ export function Header({ dynamicPages = [], isAdmin = false }: HeaderProps) {
               <Truck className="w-4 h-4" />
               Track Order
             </Link>
-            {dynamicPages.map((page) => {
-              if (!page || !page.slug) return null;
-              const pagePath = `/pages/${page.slug}`;
-              const active = isActive(pagePath);
+            {dynamicPages
+              .filter((page) => page && page.slug && !page.slug.toLowerCase().includes('admin') && !page.title.toLowerCase().includes('admin'))
+              .map((page) => {
+                const pagePath = `/pages/${page.slug}`;
+                const active = isActive(pagePath);
               return (
                 <Link
                   key={page.id}
@@ -306,12 +296,6 @@ export function Header({ dynamicPages = [], isAdmin = false }: HeaderProps) {
             >
               Contact Us
             </Link>
-            {isAdmin && (
-              <Link href="/admin" onClick={() => setMobileMenuOpen(false)} className="hover:text-amber-300 text-amber-400 font-medium flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4" />
-                Admin Portal
-              </Link>
-            )}
           </nav>
         </div>
       )}

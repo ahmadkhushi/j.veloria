@@ -4,8 +4,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model User {
@@ -29,7 +30,7 @@ model Category {
   imageUrl    String?
   department  String     @default("CLOTHES") // "CLOTHES" | "SHOES" | "BOTH"
   parentId    Int?
-  parent      Category?  @relation("SubCategories", fields: [parentId], references: [id])
+  parent      Category?  @relation("SubCategories", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   children    Category[] @relation("SubCategories")
   products    Product[]
   createdAt   DateTime   @default(now())
@@ -47,7 +48,7 @@ model Product {
   brand          String?   @default("j.viloria")
   department     String    @default("CLOTHES") // "CLOTHES" | "SHOES"
   categoryId     Int?
-  category       Category? @relation(fields: [categoryId], references: [id])
+  category       Category? @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   availableSizes Json?     // Array of sizes e.g. ["S", "M", "L", "XL"] or ["EU 40", "EU 41", "EU 42"]
   isActive       Boolean   @default(true)
   isNewArrival   Boolean   @default(false)
@@ -133,7 +134,7 @@ enum ComplaintStatus {
 model Review {
   id         Int      @id @default(autoincrement())
   productId  Int
-  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   authorName String
   rating     Int      @default(5)
   comment    String   @db.Text

@@ -1,20 +1,24 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { ShieldCheck, Lock, Mail, ArrowRight, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { ShieldCheck, Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react';
 
-export default function AdminLoginPage() {
+function AdminLoginForm() {
   const router = useRouter();
-  const [email, setEmail] = useState('admin@jveloria.com');
-  const [password, setPassword] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
+  const searchParams = useSearchParams();
+  const from = searchParams.get('from') || '/admin';
 
-  const handleLoginSubmit = async (e: React.FormEvent) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
-    setErrorMsg('');
+    setError('');
+    setLoading(true);
 
     try {
       const res = await fetch('/api/admin/login', {
@@ -25,95 +29,156 @@ export default function AdminLoginPage() {
 
       const data = await res.json();
 
-      if (res.ok && data.success) {
-        router.push('/admin');
-        router.refresh();
-      } else {
-        setErrorMsg(data.error || 'Invalid credentials.');
+      if (!res.ok) {
+        setError(data.error || 'Login failed. Please try again.');
+        setLoading(false);
+        return;
       }
-    } catch (err) {
-      setErrorMsg('Network error. Please try again.');
-    } finally {
-      setSubmitting(false);
+
+      // Redirect to the originally requested admin page (or /admin).
+      router.replace(from.startsWith('/admin') ? from : '/admin');
+    } catch {
+      setError('Network error. Please check your connection.');
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#020C1B] text-white flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-[#0A192F] border border-white/10 p-8 shadow-2xl space-y-8">
-        {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <div className="w-12 h-12 bg-amber-500/10 border border-amber-500/30 rounded-full flex items-center justify-center mx-auto text-amber-400 mb-4">
-            <ShieldCheck className="w-6 h-6" />
+    <div className="min-h-screen bg-[#020C1B] flex items-center justify-center px-4">
+      {/* Ambient background glows */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-amber-500/5 blur-[120px]" />
+        <div className="absolute -bottom-40 -right-40 w-96 h-96 rounded-full bg-blue-500/5 blur-[120px]" />
+      </div>
+
+      <div className="relative w-full max-w-md">
+        {/* Card */}
+        <div className="bg-[#0A192F] border border-white/10 shadow-2xl p-8 md:p-10">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-amber-400/10 border border-amber-400/20 mb-5">
+              <ShieldCheck className="w-7 h-7 text-amber-400" />
+            </div>
+            <h1 className="font-serif text-2xl md:text-3xl font-bold tracking-[0.15em] text-white uppercase">
+              J. VELORIA
+            </h1>
+            <p className="text-[10px] uppercase tracking-[0.35em] text-slate-400 font-light mt-1">
+              Admin Portal
+            </p>
+            <div className="w-12 h-0.5 bg-amber-400/40 mx-auto mt-4" />
           </div>
-          <span className="font-serif text-2xl font-bold tracking-[0.2em] text-white uppercase block">
-            J. VELORIA
-          </span>
-          <span className="text-[9px] uppercase tracking-[0.4em] text-slate-400 font-light block">
-            ADMIN PORTAL AUTHENTICATION
-          </span>
+
+          {/* Error Banner */}
+          {error && (
+            <div className="flex items-start gap-3 bg-red-500/10 border border-red-500/30 px-4 py-3 mb-6 animate-in fade-in">
+              <AlertCircle className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+              <p className="text-xs text-red-300 leading-relaxed">{error}</p>
+            </div>
+          )}
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Email */}
+            <div className="space-y-1.5">
+              <label
+                htmlFor="admin-email"
+                className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-medium"
+              >
+                Email Address
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
+                <input
+                  id="admin-email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoComplete="email"
+                  placeholder="admin@j-veloria.com"
+                  className="w-full bg-[#020C1B] border border-white/15 text-white text-sm pl-10 pr-4 py-3 placeholder-slate-600 focus:outline-none focus:border-amber-400/50 focus:bg-[#020C1B] transition-colors"
+                />
+              </div>
+            </div>
+
+            {/* Password */}
+            <div className="space-y-1.5">
+              <label
+                htmlFor="admin-password"
+                className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-medium"
+              >
+                Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
+                <input
+                  id="admin-password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                  placeholder="••••••••••••"
+                  className="w-full bg-[#020C1B] border border-white/15 text-white text-sm pl-10 pr-10 py-3 placeholder-slate-600 focus:outline-none focus:border-amber-400/50 transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            {/* Submit */}
+            <button
+              id="admin-login-submit"
+              type="submit"
+              disabled={loading}
+              className="w-full bg-white text-[#0A192F] font-bold text-xs uppercase tracking-widest py-3.5 hover:bg-amber-300 hover:text-[#0A192F] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
+            >
+              {loading ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-[#0A192F]/30 border-t-[#0A192F] rounded-full animate-spin" />
+                  Authenticating…
+                </>
+              ) : (
+                <>
+                  <ShieldCheck className="w-4 h-4" />
+                  Sign In to Admin
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Footer note */}
+          <p className="text-center text-[10px] text-slate-600 mt-8 leading-relaxed">
+            This portal is restricted to authorized administrators only.
+            <br />
+            Unauthorized access attempts are logged.
+          </p>
         </div>
 
-        {errorMsg && (
-          <div className="p-3 bg-red-950/70 border border-red-500/40 text-red-200 text-xs text-center flex items-center justify-center gap-2">
-            <AlertCircle className="w-4 h-4 flex-shrink-0" />
-            <span>{errorMsg}</span>
-          </div>
-        )}
-
-        {/* Login Form */}
-        <form onSubmit={handleLoginSubmit} className="space-y-4">
-          <div>
-            <label className="block text-[11px] uppercase tracking-wider text-slate-400 mb-1 font-semibold">
-              Admin Email
-            </label>
-            <div className="relative">
-              <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
-              <input
-                type="text"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@jveloria.com"
-                className="w-full bg-[#020C1B] border border-white/20 pl-10 pr-3 py-2.5 text-xs text-white focus:outline-none focus:border-white"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-[11px] uppercase tracking-wider text-slate-400 mb-1 font-semibold">
-              Admin Password
-            </label>
-            <div className="relative">
-              <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full bg-[#020C1B] border border-white/20 pl-10 pr-3 py-2.5 text-xs text-white focus:outline-none focus:border-white"
-              />
-            </div>
-          </div>
-
-          {/* Quick Credential Hint Box */}
-          <div className="p-3 bg-[#020C1B] border border-white/10 text-[11px] text-slate-400 space-y-1">
-            <p className="font-semibold text-amber-300 uppercase text-[10px] tracking-wider">Default Admin Credentials:</p>
-            <p>Email: <code className="text-white font-mono">admin@jveloria.com</code></p>
-            <p>Password: <code className="text-white font-mono">admin123456</code></p>
-          </div>
-
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full flex items-center justify-center gap-2 py-3.5 bg-white text-[#0A192F] font-bold text-xs uppercase tracking-[0.2em] hover:bg-slate-200 transition-colors mt-6"
+        {/* Back to store link */}
+        <div className="text-center mt-6">
+          <a
+            href="/"
+            className="text-[11px] uppercase tracking-widest text-slate-500 hover:text-slate-300 transition-colors"
           >
-            {submitting ? 'Authenticating...' : 'Enter Admin Portal'}
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </form>
+            ← Back to J. VELORIA Store
+          </a>
+        </div>
       </div>
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense>
+      <AdminLoginForm />
+    </Suspense>
   );
 }

@@ -6,6 +6,9 @@ import { CinematicVideoHero } from '@/components/home/CinematicVideoHero';
 import { SideScrollCarousel } from '@/components/shop/SideScrollCarousel';
 import { ArrowRight, ShieldCheck, Sparkles, Feather } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 async function getFeaturedSideScrollProducts() {
   try {
     const products = await prisma.product.findMany({

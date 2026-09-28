@@ -7,7 +7,7 @@ async function main() {
   console.log('Seeding j.veloria database...');
 
   // 1. Create Admin User
-  const adminPassword = await bcrypt.hash('admin123', 10);
+  const adminPassword = await bcrypt.hash('HAF123451122', 10);
   const admin = await prisma.user.upsert({
     where: { email: 'admin@jveloria.com' },
     update: { passwordHash: adminPassword, role: 'ADMIN' },

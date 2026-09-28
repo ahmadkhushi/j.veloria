@@ -1,12 +1,10 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
-import { MobileNav } from '@/components/layout/MobileNav';
-import { CartDrawer } from '@/components/layout/CartDrawer';
-import { WhatsAppFloat } from '@/components/layout/WhatsAppFloat';
+import { PublicLayout } from '@/components/layout/PublicLayout';
 import { prisma } from '@/lib/prisma';
-import { getSession } from '@/lib/session';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: 'J. VELORIA | Luxury Ready-to-Wear Clothing & Footwear',
@@ -27,10 +25,16 @@ async function getDynamicPages() {
       where: {
         isPublished: true,
         showInHeader: true,
+        // Exclude any page whose slug or title contains "admin" — at the DB level
+        // so it never reaches the UI regardless of component-level filters.
         NOT: [
           { slug: { in: ['atelier-craftsmanship', 'heritage-craftsmanship'] } },
           { title: { contains: 'Craftsmanship' } },
           { title: { contains: 'ATELIER' } },
+          { slug: { contains: 'admin' } },
+          { title: { contains: 'admin' } },
+          { title: { contains: 'Admin' } },
+          { title: { contains: 'ADMIN' } },
         ],
       },
       select: { id: true, title: true, slug: true },
@@ -48,13 +52,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const dynamicPages = await getDynamicPages();
-  let isAdmin = false;
-  try {
-    const session = await getSession();
-    isAdmin = session?.role === 'ADMIN';
-  } catch (error) {
-    isAdmin = false;
-  }
 
   return (
     <html lang="en" className="dark scroll-smooth" suppressHydrationWarning>
@@ -67,15 +64,11 @@ export default async function RootLayout({
         />
       </head>
       <body className="bg-[#020C1B] text-white min-h-screen flex flex-col selection:bg-white selection:text-[#0A192F]" suppressHydrationWarning>
-        <Header dynamicPages={dynamicPages} isAdmin={isAdmin} />
-        <CartDrawer />
-        <main className="flex-1 pt-[108px]">
+        <PublicLayout dynamicPages={dynamicPages}>
           {children}
-        </main>
-        <WhatsAppFloat />
-        <Footer dynamicPages={dynamicPages} />
-        <MobileNav />
+        </PublicLayout>
       </body>
     </html>
   );
 }
+
