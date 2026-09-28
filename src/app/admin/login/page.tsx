@@ -7,7 +7,7 @@ import { ShieldCheck, Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react'
 function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const from = searchParams.get('from') || '/admin';
+  const from = searchParams.get('from') || '/admin/products';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -35,8 +35,9 @@ function AdminLoginForm() {
         return;
       }
 
-      // Redirect to the originally requested admin page (or /admin).
-      router.replace(from.startsWith('/admin') ? from : '/admin');
+      // Redirect to originally requested admin page (or /admin/products).
+      const target = from && from !== '/admin' && from.startsWith('/admin') ? from : '/admin/products';
+      router.replace(target);
     } catch {
       setError('Network error. Please check your connection.');
       setLoading(false);
