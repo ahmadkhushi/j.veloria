@@ -125,15 +125,16 @@ export function Footer({ dynamicPages = [] }: { dynamicPages?: CustomPageFooterL
                 <Mail className="w-3.5 h-3.5 text-slate-400" /> j.veloria.pk@gmail.com
               </a>
             </li>
-            {dynamicPages
-              .filter((page) => page && page.slug && !page.slug.toLowerCase().includes('admin') && !page.title.toLowerCase().includes('admin'))
-              .map((page) => (
+            {dynamicPages.map((page) => {
+              if (!page || !page.slug) return null;
+              return (
                 <li key={page.id}>
                   <Link href={`/pages/${page.slug}`} className="hover:text-white transition-colors">
                     {page.title}
                   </Link>
                 </li>
-              ))}
+              );
+            })}
           </ul>
         </div>
 

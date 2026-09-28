@@ -139,11 +139,10 @@ export function Header({ dynamicPages = [] }: HeaderProps) {
               </Link>
 
               {/* Dynamic Custom Pages Links */}
-              {dynamicPages
-                .filter((page) => page && page.slug && !page.slug.toLowerCase().includes('admin') && !page.title.toLowerCase().includes('admin'))
-                .map((page) => {
-                  const pagePath = `/pages/${page.slug}`;
-                  const active = isActive(pagePath);
+              {dynamicPages.map((page) => {
+                if (!page || !page.slug) return null;
+                const pagePath = `/pages/${page.slug}`;
+                const active = isActive(pagePath);
                 return (
                   <Link
                     key={page.id}
@@ -273,11 +272,10 @@ export function Header({ dynamicPages = [] }: HeaderProps) {
               <Truck className="w-4 h-4" />
               Track Order
             </Link>
-            {dynamicPages
-              .filter((page) => page && page.slug && !page.slug.toLowerCase().includes('admin') && !page.title.toLowerCase().includes('admin'))
-              .map((page) => {
-                const pagePath = `/pages/${page.slug}`;
-                const active = isActive(pagePath);
+            {dynamicPages.map((page) => {
+              if (!page || !page.slug) return null;
+              const pagePath = `/pages/${page.slug}`;
+              const active = isActive(pagePath);
               return (
                 <Link
                   key={page.id}
