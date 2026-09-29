@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000">
+  <rect width="800" height="1000" fill="#0A192F"/>
+  <rect x="1" y="1" width="798" height="998" fill="none" stroke="#ffffff22" stroke-width="2"/>
+  <text x="400" y="480" font-family="Georgia, serif" font-size="28" fill="#334155" text-anchor="middle">J. VELORIA</text>
+  <text x="400" y="520" font-family="Arial, sans-serif" font-size="14" fill="#475569" text-anchor="middle">Image Unavailable</text>
+  <line x1="300" y1="540" x2="500" y2="540" stroke="#1e3a5f" stroke-width="1"/>
+</svg>

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { normalizeImageUrl } from '@/lib/image-helper';
 import {
   Package,
   Plus,
@@ -11,6 +12,9 @@ import {
   CheckCircle2,
   XCircle,
   RefreshCw,
+  Link2,
+  Wand2,
+  Image as ImageIcon,
 } from 'lucide-react';
 
 interface ProductItem {
@@ -47,6 +51,8 @@ export default function AdminProductsPage() {
   const [description, setDescription] = useState('');
   const [isFeatured, setIsFeatured] = useState(false);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
+  const [extractingLink, setExtractingLink] = useState(false);
+  const [linkMessage, setLinkMessage] = useState<{ text: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   const clothingSizes = ['S', 'M', 'L', 'XL', '2XL'];
   const shoeSizes = ['EU 39', 'EU 40', 'EU 41', 'EU 42', 'EU 43', 'EU 44'];
@@ -107,10 +113,59 @@ export default function AdminProductsPage() {
     }
   };
 
+  const handleExtractFromLink = async (overrideUrl?: string) => {
+    const targetUrl = overrideUrl || imageUrl;
+    if (!targetUrl || !targetUrl.trim()) {
+      setLinkMessage({ text: 'Please enter or paste a product link / image URL.', type: 'error' });
+      return;
+    }
+
+    setExtractingLink(true);
+    setLinkMessage({ text: 'Extracting product picture & info from link...', type: 'info' });
+
+    try {
+      const res = await fetch('/api/admin/extract-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: targetUrl.trim() }),
+      });
+      const data = await res.json();
+
+      if (data.success && data.imageUrl) {
+        setImageUrl(data.imageUrl);
+
+        let msg = '✓ Product picture extracted successfully!';
+        if (data.title && !name) {
+          setName(data.title);
+          msg += ' Title auto-filled.';
+        }
+        if (data.price && !price) {
+          setPrice(data.price);
+          msg += ' Price auto-filled.';
+        }
+
+        setLinkMessage({ text: msg, type: 'success' });
+      } else {
+        setLinkMessage({
+          text: 'Could not extract image from web page. Using normalized link directly.',
+          type: 'info',
+        });
+        setImageUrl(normalizeImageUrl(targetUrl));
+      }
+    } catch (err) {
+      console.error('Error extracting image from link:', err);
+      setLinkMessage({ text: 'Failed to extract picture from link. Using direct URL.', type: 'error' });
+      setImageUrl(normalizeImageUrl(targetUrl));
+    } finally {
+      setExtractingLink(false);
+    }
+  };
+
   const handleCreateProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     try {
+      const cleanImg = normalizeImageUrl(imageUrl);
       const res = await fetch('/api/admin/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -120,7 +175,7 @@ export default function AdminProductsPage() {
           salePrice: salePrice || null,
           department,
           brand,
-          imageUrl: imageUrl || 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=800&auto=format&fit=crop',
+          imageUrl: cleanImg || 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=800&auto=format&fit=crop',
           description,
           availableSizes: selectedSizes,
           isFeatured,
@@ -264,6 +319,7 @@ export default function AdminProductsPage() {
               <thead className="bg-[#020C1B] text-slate-400 font-semibold uppercase tracking-wider border-b border-white/10">
                 <tr>
                   <th className="py-3 px-4">ID</th>
+                  <th className="py-3 px-4">Image</th>
                   <th className="py-3 px-4">Product</th>
                   <th className="py-3 px-4">Dept</th>
                   <th className="py-3 px-4">Price</th>
@@ -272,13 +328,26 @@ export default function AdminProductsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {filteredProducts.map((p) => (
-                  <tr key={p.id} className="hover:bg-white/5 transition-colors">
-                    <td className="py-3.5 px-4 font-mono text-slate-400">#{p.id}</td>
-                    <td className="py-3.5 px-4">
-                      <div className="font-medium text-white">{p.name}</div>
-                      <div className="text-[10px] text-slate-400 font-mono">/product/{p.slug}</div>
-                    </td>
+                {filteredProducts.map((p) => {
+                  const displayImg = normalizeImageUrl(p.imageUrl);
+                  return (
+                    <tr key={p.id} className="hover:bg-white/5 transition-colors">
+                      <td className="py-3.5 px-4 font-mono text-slate-400">#{p.id}</td>
+                      <td className="py-3.5 px-4">
+                        <div className="w-10 h-12 bg-[#020C1B] border border-white/10 overflow-hidden relative flex-shrink-0">
+                          <img
+                            src={displayImg}
+                            alt={p.name}
+                            referrerPolicy="no-referrer"
+                            onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.png'; }}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <div className="font-medium text-white">{p.name}</div>
+                        <div className="text-[10px] text-slate-400 font-mono">/product/{p.slug}</div>
+                      </td>
                     <td className="py-3.5 px-4">
                       <span className="uppercase text-[10px] font-bold text-amber-300">
                         {p.department}
@@ -315,7 +384,8 @@ export default function AdminProductsPage() {
                       </button>
                     </td>
                   </tr>
-                ))}
+                );
+              })}
               </tbody>
             </table>
           </div>
@@ -461,17 +531,92 @@ export default function AdminProductsPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[11px] uppercase tracking-wider text-slate-400 mb-1">
-                  Image URL
-                </label>
-                <input
-                  type="url"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="https://images.unsplash.com/..."
-                  className="w-full bg-[#020C1B] border border-white/20 p-3 text-xs text-white focus:outline-none"
-                />
+              <div className="space-y-3 bg-[#020C1B] border border-amber-500/30 p-4">
+                <div className="flex items-center justify-between">
+                  <label className="block text-[11px] uppercase tracking-wider text-amber-300 font-bold flex items-center gap-1.5">
+                    <Link2 className="w-4 h-4 text-amber-400" />
+                    Product Link / Image URL (Add via Link)
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => handleExtractFromLink()}
+                    disabled={extractingLink || !imageUrl}
+                    className="flex items-center gap-1 px-3 py-1 bg-amber-400 text-[#0A192F] font-bold text-[10px] uppercase tracking-wider hover:bg-amber-300 disabled:opacity-50 transition-colors"
+                  >
+                    <Wand2 className="w-3 h-3" />
+                    {extractingLink ? 'Extracting Picture...' : 'Fetch Picture from Link'}
+                  </button>
+                </div>
+
+                <div className="relative">
+                  <input
+                    type="url"
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    onPaste={(e) => {
+                      const pasted = e.clipboardData.getData('text');
+                      if (pasted) {
+                        setTimeout(() => handleExtractFromLink(pasted), 100);
+                      }
+                    }}
+                    placeholder="Paste ANY website link (e.g. Junaid Jamshed, Google Drive, Pinterest, Shopify, Unsplash, Imgur)..."
+                    className="w-full bg-[#0A192F] border border-white/20 p-3 text-xs text-white focus:outline-none focus:border-amber-400/50"
+                  />
+                </div>
+
+                {linkMessage && (
+                  <div
+                    className={`text-[11px] p-2 border ${
+                      linkMessage.type === 'success'
+                        ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
+                        : linkMessage.type === 'error'
+                        ? 'bg-red-950/40 border-red-500/40 text-red-300'
+                        : 'bg-blue-950/40 border-blue-500/40 text-blue-300'
+                    }`}
+                  >
+                    {linkMessage.text}
+                  </div>
+                )}
+
+                {/* Live Image Preview */}
+                {imageUrl && (
+                  <div className="mt-2 p-2 bg-[#0A192F] border border-white/10 flex items-center gap-3">
+                    <div className="relative w-16 h-20 bg-[#020C1B] border border-white/10 flex-shrink-0 overflow-hidden">
+                      <img
+                        src={normalizeImageUrl(imageUrl)}
+                        alt="Image preview"
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                          const sibling = (e.target as HTMLImageElement).nextElementSibling as HTMLElement;
+                          if (sibling) sibling.style.display = 'flex';
+                        }}
+                        onLoad={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'block';
+                          const sibling = (e.target as HTMLImageElement).nextElementSibling as HTMLElement;
+                          if (sibling) sibling.style.display = 'none';
+                        }}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="w-full h-full bg-red-900/30 border border-red-500/30 hidden items-center justify-center text-center p-1">
+                        <span className="text-[9px] text-red-400">❌ Failed to load</span>
+                      </div>
+                    </div>
+
+                    <div className="text-[10px] text-slate-300 space-y-1">
+                      <p className="text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                        Picture Ready
+                      </p>
+                      <p className="text-slate-400 line-clamp-1 break-all text-[9px] font-mono">
+                        {normalizeImageUrl(imageUrl)}
+                      </p>
+                      <p className="text-slate-500">
+                        This picture will show across your store (Clothes Hub, Shoes Hub, Details & Cart).
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div>

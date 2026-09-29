@@ -4,7 +4,7 @@ import React from 'react';
 import { useCartStore } from '@/lib/cart-store';
 import { X, Trash2, ShoppingBag, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
+import { normalizeImageUrl } from '@/lib/image-helper';
 
 export function CartDrawer() {
   const [mounted, setMounted] = React.useState(false);
@@ -60,11 +60,12 @@ export function CartDrawer() {
                   className="flex gap-4 p-4 bg-[#112240] border border-white/5 rounded-none"
                 >
                   <div className="relative w-20 h-24 bg-[#020C1B] flex-shrink-0 overflow-hidden">
-                    <Image
-                      src={item.imageUrl || '/placeholder.png'}
+                    <img
+                      src={normalizeImageUrl(item.imageUrl)}
                       alt={item.name}
-                      fill
-                      className="object-cover"
+                      referrerPolicy="no-referrer"
+                      onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.png'; }}
+                      className="absolute inset-0 w-full h-full object-cover"
                     />
                   </div>
                   <div className="flex-1 flex flex-col justify-between">

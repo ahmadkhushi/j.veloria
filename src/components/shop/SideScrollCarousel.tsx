@@ -2,8 +2,8 @@
 
 import React, { useRef } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
+import { normalizeImageUrl } from '@/lib/image-helper';
 
 export interface SideScrollProduct {
   id: number;
@@ -83,11 +83,13 @@ export function SideScrollCarousel({ products }: { products: SideScrollProduct[]
               <div>
                 {/* Compact Product Image Size (h-52) */}
                 <div className="relative h-52 w-full overflow-hidden bg-[#020C1B]">
-                  <Image
-                    src={prod.imageUrl || '/placeholder.png'}
+                  {/* Use native img for universal external URL support */}
+                  <img
+                    src={normalizeImageUrl(prod.imageUrl)}
                     alt={prod.name}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                    referrerPolicy="no-referrer"
+                    onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.png'; }}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                   />
                   <div className="absolute top-2.5 left-2.5 bg-[#020C1B]/90 border border-white/20 text-white text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider layer-depth-1 shadow-lg">
                     {prod.department}

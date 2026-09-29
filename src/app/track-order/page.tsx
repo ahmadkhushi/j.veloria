@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Image from 'next/image';
 import { Search, Truck, CheckCircle2, Clock, PackageCheck, AlertCircle, PhoneCall } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 
@@ -179,7 +178,12 @@ function TrackOrderContent() {
               {order.items.map((item: any, idx: number) => (
                 <div key={idx} className="flex items-center gap-4 bg-[#020C1B] p-4 border border-white/10">
                   <div className="relative w-16 h-20 bg-[#0A192F] flex-shrink-0">
-                    <Image src={item.imageUrl || '/placeholder.png'} alt={item.name} fill className="object-cover" />
+                    <img
+                      src={item.imageUrl || '/placeholder.png'}
+                      alt={item.name}
+                      onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.png'; }}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
                   </div>
                   <div className="flex-1 text-xs space-y-1">
                     <h4 className="font-serif font-bold text-white">{item.name}</h4>

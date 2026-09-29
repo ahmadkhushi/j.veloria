@@ -19,11 +19,13 @@ const nextConfig: NextConfig = {
   ],
   images: {
     remotePatterns: [
-      { protocol: 'https', hostname: 'images.unsplash.com' },
-      { protocol: 'https', hostname: 'plus.unsplash.com' },
-      { protocol: 'https', hostname: 'cdn.pixabay.com' },
-      { protocol: 'https', hostname: 'i.imgur.com' }
-    ]
+      // Allow any HTTPS image from any host — admins enter their own image URLs
+      { protocol: 'https', hostname: '**' },
+      { protocol: 'http', hostname: '**' },
+    ],
+    // Unoptimized fallback for hosts that block Next.js image optimization referrers
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   async redirects() {
     return [

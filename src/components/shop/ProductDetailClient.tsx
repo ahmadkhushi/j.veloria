@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 import { useCartStore } from '@/lib/cart-store';
 import { ShoppingBag, Check, ShieldCheck, Truck, RotateCcw, Info, Film } from 'lucide-react';
 import Link from 'next/link';
+import { normalizeImageUrl } from '@/lib/image-helper';
 
 interface ProductProps {
   id: number;
@@ -61,12 +61,13 @@ export function ProductDetailClient({ product }: { product: ProductProps }) {
       {/* Media Gallery / Video Preview */}
       <div className="space-y-4">
         <div className="relative h-[500px] w-full bg-[#020C1B] border border-white/10 overflow-hidden">
-          <Image
-            src={product.imageUrl || '/placeholder.png'}
+          {/* Native img for universal external URL support — works with any domain */}
+          <img
+            src={normalizeImageUrl(product.imageUrl)}
             alt={product.name}
-            fill
-            priority
-            className="object-cover"
+            referrerPolicy="no-referrer"
+            onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.png'; }}
+            className="absolute inset-0 w-full h-full object-cover"
           />
           {product.salePrice && (
             <span className="absolute top-4 left-4 bg-white text-[#0A192F] text-xs font-bold px-3 py-1 uppercase tracking-wider">

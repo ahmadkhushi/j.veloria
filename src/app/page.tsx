@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { prisma } from '@/lib/prisma';
+import { normalizeImageUrl } from '@/lib/image-helper';
 import { CinematicVideoHero } from '@/components/home/CinematicVideoHero';
 import { SideScrollCarousel } from '@/components/shop/SideScrollCarousel';
 import { ArrowRight, ShieldCheck, Sparkles, Feather } from 'lucide-react';
@@ -80,11 +80,10 @@ export default async function HomePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 preserve-3d">
           {/* Clothes Hub Card */}
           <div className="group relative h-[400px] overflow-hidden border border-white/10 bg-[#0A192F] card-3d shimmer-3d shadow-2xl">
-            <Image
+            <img
               src="https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=1000&auto=format&fit=crop"
               alt="J. VELORIA Clothes Collection"
-              fill
-              className="object-cover opacity-70 group-hover:scale-110 group-hover:rotate-1 transition-transform duration-700 ease-out"
+              className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-110 group-hover:rotate-1 transition-transform duration-700 ease-out"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#020C1B] via-[#020C1B]/40 to-transparent"></div>
             <div className="absolute inset-0 p-8 flex flex-col justify-end text-white space-y-3 layer-depth-2">
@@ -106,11 +105,10 @@ export default async function HomePage() {
 
           {/* Shoes Hub Card */}
           <div className="group relative h-[400px] overflow-hidden border border-white/10 bg-[#0A192F] card-3d shimmer-3d shadow-2xl">
-            <Image
+            <img
               src="https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?q=80&w=1000&auto=format&fit=crop"
               alt="J. VELORIA Footwear Collection"
-              fill
-              className="object-cover opacity-70 group-hover:scale-110 group-hover:rotate-1 transition-transform duration-700 ease-out"
+              className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-110 group-hover:rotate-1 transition-transform duration-700 ease-out"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#020C1B] via-[#020C1B]/40 to-transparent"></div>
             <div className="absolute inset-0 p-8 flex flex-col justify-end text-white space-y-3 layer-depth-2">
@@ -158,11 +156,13 @@ export default async function HomePage() {
                 <div>
                   {/* Reduced Image Height for Mobile (h-36 sm:h-52) */}
                   <div className="relative h-36 sm:h-52 w-full overflow-hidden bg-[#020C1B]">
-                    <Image
-                      src={prod.imageUrl || '/placeholder.png'}
+                    {/* Native img — works with any image URL domain */}
+                    <img
+                      src={normalizeImageUrl(prod.imageUrl)}
                       alt={prod.name}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                      referrerPolicy="no-referrer"
+                      onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.png'; }}
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                     />
                     <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 bg-[#020C1B]/90 border border-white/20 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 uppercase tracking-wider layer-depth-1 shadow-lg">
                       {prod.department}

@@ -2,9 +2,10 @@
 
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useCartStore } from '@/lib/cart-store';
 import { Trash2, ShoppingBag, ArrowRight, ArrowLeft } from 'lucide-react';
+
+import { normalizeImageUrl } from '@/lib/image-helper';
 
 export default function CartPage() {
   const [mounted, setMounted] = React.useState(false);
@@ -68,11 +69,12 @@ export default function CartPage() {
             >
               <div className="flex items-center gap-4">
                 <div className="relative w-24 h-28 bg-[#020C1B] overflow-hidden flex-shrink-0">
-                  <Image
-                    src={item.imageUrl || '/placeholder.png'}
+                  <img
+                    src={normalizeImageUrl(item.imageUrl)}
                     alt={item.name}
-                    fill
-                    className="object-cover"
+                    referrerPolicy="no-referrer"
+                    onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.png'; }}
+                    className="absolute inset-0 w-full h-full object-cover"
                   />
                 </div>
                 <div className="space-y-1">

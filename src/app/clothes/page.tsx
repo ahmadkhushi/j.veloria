@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { prisma } from '@/lib/prisma';
+import { normalizeImageUrl } from '@/lib/image-helper';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -154,11 +154,13 @@ export default async function ClothesHubPage({ searchParams }: SearchParamsProps
                 <div>
                   {/* Compact Image Height: h-36 sm:h-52 */}
                   <div className="relative h-36 sm:h-52 w-full overflow-hidden bg-[#020C1B]">
-                    <Image
-                      src={prod.imageUrl || '/placeholder.png'}
+                    {/* Native img — works with any image URL domain */}
+                    <img
+                      src={normalizeImageUrl(prod.imageUrl)}
                       alt={prod.name}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      referrerPolicy="no-referrer"
+                      onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.png'; }}
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 bg-[#020C1B]/90 border border-white/20 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 uppercase tracking-wider">
                       {prod.category?.name || 'Clothes'}

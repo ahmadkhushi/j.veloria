@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { normalizeImageUrl } from '@/lib/image-helper';
 
 export async function GET() {
   try {
@@ -50,6 +51,45 @@ export async function POST(req: Request) {
         '-' +
         Math.floor(Math.random() * 10000);
 
+    let cleanImageUrl = normalizeImageUrl(imageUrl);
+
+    // If cleanImageUrl still looks like a web page link (e.g. HTML product page link), try to resolve to direct image
+    if (cleanImageUrl && cleanImageUrl.startsWith('http')) {
+      const isDirectImage = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif', '.svg'].some((ext) =>
+        cleanImageUrl.toLowerCase().includes(ext)
+      ) || cleanImageUrl.includes('images.unsplash.com') || cleanImageUrl.includes('lh3.googleusercontent.com') || cleanImageUrl.includes('cdn.shopify.com');
+
+      if (!isDirectImage) {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 4000);
+          const resPage = await fetch(cleanImageUrl, {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+              Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9',
+            },
+            signal: controller.signal,
+          });
+          clearTimeout(timeoutId);
+          if (resPage.ok) {
+            const htmlText = await resPage.text();
+            const ogMatch =
+              htmlText.match(/<meta[^>]*property=["']og:image:secure_url["'][^>]*content=["']([^"']+)["']/i) ||
+              htmlText.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i) ||
+              htmlText.match(/<meta[^>]*name=["']twitter:image["'][^>]*content=["']([^"']+)["']/i);
+            if (ogMatch && ogMatch[1]) {
+              let extracted = ogMatch[1];
+              if (extracted.startsWith('//')) extracted = `https:${extracted}`;
+              else if (!extracted.startsWith('http')) extracted = new URL(extracted, cleanImageUrl).href;
+              cleanImageUrl = normalizeImageUrl(extracted);
+            }
+          }
+        } catch (e) {
+          // ignore extraction timeout and fallback to normalized URL
+        }
+      }
+    }
+
     const product = await prisma.product.create({
       data: {
         name,
@@ -57,7 +97,7 @@ export async function POST(req: Request) {
         description,
         price: parseFloat(price),
         salePrice: salePrice ? parseFloat(salePrice) : null,
-        imageUrl,
+        imageUrl: cleanImageUrl || 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=800&auto=format&fit=crop',
         videoUrl,
         brand: brand || 'J. VELORIA',
         department: department || 'CLOTHES',
