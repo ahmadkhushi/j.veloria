@@ -30,10 +30,13 @@ export default function GlobalErrorPage({
 
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
         <button
-          onClick={() => reset()}
-          className="w-full sm:w-auto px-6 py-3 bg-white text-[#0A192F] font-bold text-xs uppercase tracking-widest hover:bg-slate-200 transition-colors flex items-center justify-center gap-2"
+          onClick={() => {
+            if (typeof window !== 'undefined') window.location.reload();
+            else reset();
+          }}
+          className="w-full sm:w-auto px-6 py-3 bg-white text-[#0A192F] font-bold text-xs uppercase tracking-widest hover:bg-amber-300 transition-colors flex items-center justify-center gap-2 shadow-lg"
         >
-          <RefreshCw className="w-4 h-4" /> Try Again
+          <RefreshCw className="w-4 h-4" /> Reload & Try Again
         </button>
         <Link
           href="/"

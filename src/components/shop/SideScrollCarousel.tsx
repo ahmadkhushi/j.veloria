@@ -81,15 +81,15 @@ export function SideScrollCarousel({ products }: { products: SideScrollProduct[]
               className="flex-shrink-0 w-64 md:w-72 bg-[#0A192F] border border-white/10 flex flex-col justify-between group snap-start card-3d shimmer-3d transform-gpu"
             >
               <div>
-                {/* Compact Product Image Size (h-52) */}
-                <div className="relative h-52 w-full overflow-hidden bg-[#020C1B]">
+                {/* Full Size Carousel Product Image Size (h-72 sm:h-84 md:h-[360px]) */}
+                <div className="relative h-72 sm:h-84 md:h-[360px] w-full overflow-hidden bg-[#020C1B]">
                   {/* Use native img for universal external URL support */}
                   <img
                     src={normalizeImageUrl(prod.imageUrl)}
                     alt={prod.name}
                     referrerPolicy="no-referrer"
                     onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.png'; }}
-                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                    className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700 ease-out"
                   />
                   <div className="absolute top-2.5 left-2.5 bg-[#020C1B]/90 border border-white/20 text-white text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider layer-depth-1 shadow-lg">
                     {prod.department}

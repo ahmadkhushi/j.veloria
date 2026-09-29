@@ -60,17 +60,17 @@ export function ProductDetailClient({ product }: { product: ProductProps }) {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
       {/* Media Gallery / Video Preview */}
       <div className="space-y-4">
-        <div className="relative h-[500px] w-full bg-[#020C1B] border border-white/10 overflow-hidden">
-          {/* Native img for universal external URL support — works with any domain */}
+        <div className="relative h-[480px] sm:h-[640px] lg:h-[720px] w-full bg-[#020C1B] border border-white/10 overflow-hidden flex items-center justify-center p-2 group">
+          {/* Native img with object-contain so full uncropped image is displayed on Mobile & PC */}
           <img
             src={normalizeImageUrl(product.imageUrl)}
             alt={product.name}
             referrerPolicy="no-referrer"
             onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.png'; }}
-            className="absolute inset-0 w-full h-full object-cover"
+            className="w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
           />
           {product.salePrice && (
-            <span className="absolute top-4 left-4 bg-white text-[#0A192F] text-xs font-bold px-3 py-1 uppercase tracking-wider">
+            <span className="absolute top-4 left-4 bg-white text-[#0A192F] text-xs font-bold px-3 py-1 uppercase tracking-wider shadow-lg z-10">
               Sale Event
             </span>
           )}
