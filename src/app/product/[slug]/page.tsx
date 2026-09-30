@@ -6,8 +6,7 @@ import { ProductDetailClient } from '@/components/shop/ProductDetailClient';
 import { normalizeImageUrl } from '@/lib/image-helper';
 import { SafeImage } from '@/components/common/SafeImage';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
 
 interface ProductPageProps {
   params: Promise<{

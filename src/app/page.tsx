@@ -7,8 +7,7 @@ import { SideScrollCarousel } from '@/components/shop/SideScrollCarousel';
 import { SafeImage } from '@/components/common/SafeImage';
 import { ArrowRight, ShieldCheck, Sparkles, Feather } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
 
 async function getFeaturedSideScrollProducts() {
   try {
@@ -159,6 +158,7 @@ export default async function HomePage() {
               <Link
                 key={prod.id}
                 href={`/product/${prod.slug}`}
+                prefetch={true}
                 className="group bg-[#0A192F] border border-white/10 flex flex-col justify-between shadow-xl cursor-pointer hover:border-white/30 hover:-translate-y-1 transition-all duration-300"
               >
                 <div>

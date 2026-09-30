@@ -4,8 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { normalizeImageUrl } from '@/lib/image-helper';
 import { SafeImage } from '@/components/common/SafeImage';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
 
 interface SearchParamsProps {
   searchParams: Promise<{
@@ -160,6 +159,7 @@ export default async function ShoesHubPage({ searchParams }: SearchParamsProps) 
               <Link
                 key={prod.id}
                 href={`/product/${prod.slug}`}
+                prefetch={true}
                 className="group bg-[#0A192F] border border-white/10 flex flex-col justify-between transition-all duration-300 hover:border-white/30 cursor-pointer"
               >
                 <div>

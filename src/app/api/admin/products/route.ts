@@ -1,6 +1,18 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { normalizeImageUrl } from '@/lib/image-helper';
+
+function purgeStorefrontCache() {
+  try {
+    revalidatePath('/');
+    revalidatePath('/clothes');
+    revalidatePath('/shoes');
+    revalidatePath('/product/[slug]', 'page');
+  } catch (e) {
+    console.error('Cache purge error:', e);
+  }
+}
 
 export async function GET() {
   try {
@@ -109,6 +121,7 @@ export async function POST(req: Request) {
       },
     });
 
+    purgeStorefrontCache();
     return NextResponse.json({ success: true, product });
   } catch (error: any) {
     console.error('Error creating product:', error);
@@ -169,6 +182,7 @@ export async function PUT(req: Request) {
       data: updateData,
     });
 
+    purgeStorefrontCache();
     return NextResponse.json({ success: true, product: updatedProduct });
   } catch (error: any) {
     console.error('Error updating product:', error);
@@ -189,6 +203,7 @@ export async function DELETE(req: Request) {
       where: { id: parseInt(id) },
     });
 
+    purgeStorefrontCache();
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting product:', error);
