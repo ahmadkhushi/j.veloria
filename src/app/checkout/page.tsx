@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/lib/cart-store';
-import { ShieldCheck, Truck, Lock, CreditCard, Banknote } from 'lucide-react';
+import { ShieldCheck, Truck, Lock, Banknote } from 'lucide-react';
 import { normalizeImageUrl } from '@/lib/image-helper';
 
 export default function CheckoutPage() {
@@ -150,53 +150,15 @@ export default function CheckoutPage() {
             </div>
 
             <h2 className="font-serif text-lg font-bold text-white uppercase tracking-wider border-b border-white/10 pt-4 pb-4">
-              2. Payment Protocol
+              2. Payment Method
             </h2>
 
-            <div className="space-y-3">
-              <label
-                className={`flex items-center gap-3 p-4 border cursor-pointer transition-all ${
-                  formData.paymentMethod === 'cod'
-                    ? 'bg-[#112240] border-white text-white'
-                    : 'bg-[#020C1B] border-white/10 text-slate-400'
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="payment"
-                  value="cod"
-                  checked={formData.paymentMethod === 'cod'}
-                  onChange={() => setFormData({ ...formData, paymentMethod: 'cod' })}
-                  className="accent-white"
-                />
-                <Banknote className="w-5 h-5 text-white" />
-                <div>
-                  <p className="text-xs font-bold text-white uppercase">Cash on Delivery (COD)</p>
-                  <p className="text-[11px] text-slate-400">Pay white-glove courier upon receiving and fitting your order.</p>
-                </div>
-              </label>
-
-              <label
-                className={`flex items-center gap-3 p-4 border cursor-pointer transition-all ${
-                  formData.paymentMethod === 'bank'
-                    ? 'bg-[#112240] border-white text-white'
-                    : 'bg-[#020C1B] border-white/10 text-slate-400'
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="payment"
-                  value="bank"
-                  checked={formData.paymentMethod === 'bank'}
-                  onChange={() => setFormData({ ...formData, paymentMethod: 'bank' })}
-                  className="accent-white"
-                />
-                <CreditCard className="w-5 h-5 text-white" />
-                <div>
-                  <p className="text-xs font-bold text-white uppercase">Direct VIP Bank Transfer</p>
-                  <p className="text-[11px] text-slate-400">Wire transfer directly to J. VELORIA bank account.</p>
-                </div>
-              </label>
+            <div className="flex items-center gap-3 p-4 bg-[#112240] border border-white text-white">
+              <Banknote className="w-5 h-5 text-emerald-400" />
+              <div>
+                <p className="text-xs font-bold text-white uppercase">Cash on Delivery (COD)</p>
+                <p className="text-[11px] text-slate-400">Pay the courier in cash upon receiving and fitting your order.</p>
+              </div>
             </div>
 
             <button

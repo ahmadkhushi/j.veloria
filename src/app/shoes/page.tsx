@@ -157,9 +157,10 @@ export default async function ShoesHubPage({ searchParams }: SearchParamsProps) 
           {products.map((prod) => {
             const sizes = Array.isArray(prod.availableSizes) ? (prod.availableSizes as string[]) : [];
             return (
-              <div
+              <Link
                 key={prod.id}
-                className="group bg-[#0A192F] border border-white/10 flex flex-col justify-between transition-all duration-300 hover:border-white/30"
+                href={`/product/${prod.slug}`}
+                className="group bg-[#0A192F] border border-white/10 flex flex-col justify-between transition-all duration-300 hover:border-white/30 cursor-pointer"
               >
                 <div>
                   <div className="relative h-52 sm:h-72 md:h-80 lg:h-[360px] w-full overflow-hidden bg-[#020C1B]">
@@ -207,14 +208,13 @@ export default async function ShoesHubPage({ searchParams }: SearchParamsProps) 
                 </div>
 
                 <div className="p-2.5 sm:p-4 pt-0 sm:pt-0">
-                  <Link
-                    href={`/product/${prod.slug}`}
-                    className="w-full flex items-center justify-center gap-1 py-1.5 sm:py-2 bg-white/10 border border-white/20 text-white font-semibold text-[10px] sm:text-xs uppercase tracking-wider sm:tracking-widest hover:bg-white hover:text-[#0A192F] transition-all text-center"
+                  <span
+                    className="w-full flex items-center justify-center gap-1 py-1.5 sm:py-2 bg-white/10 border border-white/20 text-white font-semibold text-[10px] sm:text-xs uppercase tracking-wider sm:tracking-widest group-hover:bg-white group-hover:text-[#0A192F] transition-all text-center"
                   >
                     View Details
-                  </Link>
+                  </span>
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>
