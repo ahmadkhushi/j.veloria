@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { normalizeImageUrl } from '@/lib/image-helper';
 import { CinematicVideoHero } from '@/components/home/CinematicVideoHero';
 import { SideScrollCarousel } from '@/components/shop/SideScrollCarousel';
+import { SafeImage } from '@/components/common/SafeImage';
 import { ArrowRight, ShieldCheck, Sparkles, Feather } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -158,12 +159,10 @@ export default async function HomePage() {
                 <div>
                   {/* Full Size Image Height: h-64 sm:h-80 md:h-[380px] */}
                   <div className="relative h-64 sm:h-80 md:h-[380px] w-full overflow-hidden bg-[#020C1B]">
-                    {/* Native img — works with any image URL domain */}
-                    <img
+                    <SafeImage
                       src={normalizeImageUrl(prod.imageUrl)}
                       alt={prod.name}
                       referrerPolicy="no-referrer"
-                      onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.png'; }}
                       className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700 ease-out"
                     />
                     <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 bg-[#020C1B]/90 border border-white/20 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 uppercase tracking-wider layer-depth-1 shadow-lg">
