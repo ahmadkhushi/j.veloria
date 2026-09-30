@@ -76,9 +76,10 @@ export function SideScrollCarousel({ products }: { products: SideScrollProduct[]
         {products.map((prod) => {
           const sizes = Array.isArray(prod.availableSizes) ? (prod.availableSizes as string[]) : [];
           return (
-            <div
+            <Link
               key={prod.id}
-              className="flex-shrink-0 w-64 md:w-72 bg-[#0A192F] border border-white/10 flex flex-col justify-between group snap-start card-3d shimmer-3d transform-gpu"
+              href={`/product/${prod.slug}`}
+              className="flex-shrink-0 w-64 md:w-72 bg-[#0A192F] border border-white/10 flex flex-col justify-between group snap-start card-3d shimmer-3d transform-gpu cursor-pointer hover:border-white/30 transition-all duration-300"
             >
               <div>
                 {/* Full Size Carousel Product Image Size (h-72 sm:h-84 md:h-[360px]) */}
@@ -130,14 +131,13 @@ export function SideScrollCarousel({ products }: { products: SideScrollProduct[]
               </div>
 
               <div className="p-4 pt-0 layer-depth-2">
-                <Link
-                  href={`/product/${prod.slug}`}
-                  className="w-full flex items-center justify-center py-2 bg-white/10 border border-white/20 text-white font-semibold text-xs uppercase tracking-widest hover:bg-white hover:text-[#0A192F] transition-all duration-300 shadow-md hover:shadow-xl"
+                <span
+                  className="w-full flex items-center justify-center py-2 bg-white/10 border border-white/20 text-white font-semibold text-xs uppercase tracking-widest group-hover:bg-white group-hover:text-[#0A192F] transition-all duration-300 shadow-md group-hover:shadow-xl"
                 >
                   View Details
-                </Link>
+                </span>
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>

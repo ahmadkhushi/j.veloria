@@ -82,7 +82,10 @@ export default async function HomePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 preserve-3d">
           {/* Clothes Hub Card */}
-          <div className="group relative h-[400px] overflow-hidden border border-white/10 bg-[#0A192F] card-3d shimmer-3d shadow-2xl">
+          <Link
+            href="/clothes"
+            className="block group relative h-[400px] overflow-hidden border border-white/10 bg-[#0A192F] card-3d shimmer-3d shadow-2xl cursor-pointer"
+          >
             <img
               src="https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=1000&auto=format&fit=crop"
               alt="J. VELORIA Clothes Collection"
@@ -96,18 +99,20 @@ export default async function HomePage() {
                 Tailored suits, evening tuxedos, silk dress shirts, and cashmere outerwear ready for immediate wear.
               </p>
               <div className="pt-2 layer-depth-3">
-                <Link
-                  href="/clothes"
-                  className="inline-flex items-center gap-3 px-6 py-3 bg-white text-[#0A192F] font-semibold text-xs uppercase tracking-widest hover:bg-slate-200 transition-all duration-300 shadow-xl hover:shadow-[0_10px_25px_rgba(255,255,255,0.2)] hover:-translate-y-1 transform-gpu"
+                <span
+                  className="inline-flex items-center gap-3 px-6 py-3 bg-white text-[#0A192F] font-semibold text-xs uppercase tracking-widest group-hover:bg-slate-200 transition-all duration-300 shadow-xl group-hover:shadow-[0_10px_25px_rgba(255,255,255,0.2)] group-hover:-translate-y-1 transform-gpu"
                 >
                   Explore Clothes <ArrowRight className="w-4 h-4" />
-                </Link>
+                </span>
               </div>
             </div>
-          </div>
+          </Link>
 
           {/* Shoes Hub Card */}
-          <div className="group relative h-[400px] overflow-hidden border border-white/10 bg-[#0A192F] card-3d shimmer-3d shadow-2xl">
+          <Link
+            href="/shoes"
+            className="block group relative h-[400px] overflow-hidden border border-white/10 bg-[#0A192F] card-3d shimmer-3d shadow-2xl cursor-pointer"
+          >
             <img
               src="https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?q=80&w=1000&auto=format&fit=crop"
               alt="J. VELORIA Footwear Collection"
@@ -121,15 +126,14 @@ export default async function HomePage() {
                 Hand-stained calfskin oxfords, Tuscan suede loafers, and Goodyear-welted dress boots.
               </p>
               <div className="pt-2 layer-depth-3">
-                <Link
-                  href="/shoes"
-                  className="inline-flex items-center gap-3 px-6 py-3 bg-white text-[#0A192F] font-semibold text-xs uppercase tracking-widest hover:bg-slate-200 transition-all duration-300 shadow-xl hover:shadow-[0_10px_25px_rgba(255,255,255,0.2)] hover:-translate-y-1 transform-gpu"
+                <span
+                  className="inline-flex items-center gap-3 px-6 py-3 bg-white text-[#0A192F] font-semibold text-xs uppercase tracking-widest group-hover:bg-slate-200 transition-all duration-300 shadow-xl group-hover:shadow-[0_10px_25px_rgba(255,255,255,0.2)] group-hover:-translate-y-1 transform-gpu"
                 >
                   Explore Shoes <ArrowRight className="w-4 h-4" />
-                </Link>
+                </span>
               </div>
             </div>
-          </div>
+          </Link>
         </div>
       </section>
 
