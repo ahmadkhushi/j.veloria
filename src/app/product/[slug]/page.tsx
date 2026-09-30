@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { ProductDetailClient } from '@/components/shop/ProductDetailClient';
 import { normalizeImageUrl } from '@/lib/image-helper';
+import { SafeImage } from '@/components/common/SafeImage';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -118,12 +119,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 >
                   <div>
                     <div className="relative h-52 sm:h-72 md:h-80 lg:h-[320px] w-full overflow-hidden bg-[#020C1B]">
-                      <img
+                      <SafeImage
                         src={normalizeImageUrl(prod.imageUrl)}
                         alt={prod.name}
                         referrerPolicy="no-referrer"
-                        onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.png'; }}
-                        className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700 ease-out"
+                        className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500 ease-out"
                       />
                       <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 bg-[#020C1B]/90 border border-white/20 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 uppercase tracking-wider shadow-lg">
                         {prod.department}
