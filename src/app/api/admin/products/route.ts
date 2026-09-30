@@ -119,6 +119,66 @@ export async function POST(req: Request) {
   }
 }
 
+export async function PUT(req: Request) {
+  try {
+    const body = await req.json();
+    const {
+      id,
+      name,
+      slug,
+      description,
+      price,
+      salePrice,
+      imageUrl,
+      videoUrl,
+      brand,
+      department,
+      categoryId,
+      availableSizes,
+      stock,
+      isFeatured,
+      isNewArrival,
+      isActive,
+    } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: 'Product ID is required for update' }, { status: 400 });
+    }
+
+    let cleanImageUrl = normalizeImageUrl(imageUrl);
+
+    const updateData: any = {};
+    if (name !== undefined) updateData.name = name;
+    if (slug !== undefined && slug.trim()) updateData.slug = slug.trim();
+    if (description !== undefined) updateData.description = description;
+    if (price !== undefined) updateData.price = parseFloat(price);
+    if (salePrice !== undefined) updateData.salePrice = salePrice ? parseFloat(salePrice) : null;
+    if (cleanImageUrl !== undefined) updateData.imageUrl = cleanImageUrl;
+    if (videoUrl !== undefined) updateData.videoUrl = videoUrl;
+    if (brand !== undefined) updateData.brand = brand;
+    if (department !== undefined) updateData.department = department;
+    if (categoryId !== undefined) updateData.categoryId = categoryId ? parseInt(categoryId) : null;
+    if (availableSizes !== undefined) updateData.availableSizes = availableSizes;
+    if (stock !== undefined) updateData.stock = parseInt(stock);
+    if (isFeatured !== undefined) updateData.isFeatured = Boolean(isFeatured);
+    if (isNewArrival !== undefined) updateData.isNewArrival = Boolean(isNewArrival);
+    if (isActive !== undefined) updateData.isActive = Boolean(isActive);
+
+    const updatedProduct = await prisma.product.update({
+      where: { id: parseInt(id) },
+      data: updateData,
+    });
+
+    return NextResponse.json({ success: true, product: updatedProduct });
+  } catch (error: any) {
+    console.error('Error updating product:', error);
+    return NextResponse.json(
+      { error: error?.message || 'Failed to update product' },
+      { status: 500 }
+    );
+  }
+}
+
 export async function DELETE(req: Request) {
   try {
     const { searchParams } = new URL(req.url);

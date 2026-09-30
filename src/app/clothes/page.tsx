@@ -153,7 +153,7 @@ export default async function ClothesHubPage({ searchParams }: SearchParamsProps
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4 md:gap-6">
           {products.map((prod) => {
             const sizes = Array.isArray(prod.availableSizes) ? (prod.availableSizes as string[]) : [];
             return (
@@ -162,8 +162,7 @@ export default async function ClothesHubPage({ searchParams }: SearchParamsProps
                 className="group bg-[#0A192F] border border-white/10 flex flex-col justify-between transition-all duration-300 hover:border-white/30"
               >
                 <div>
-                  {/* Full Size Image Height: h-64 sm:h-80 md:h-[380px] */}
-                  <div className="relative h-64 sm:h-80 md:h-[380px] w-full overflow-hidden bg-[#020C1B]">
+                  <div className="relative h-52 sm:h-72 md:h-80 lg:h-[360px] w-full overflow-hidden bg-[#020C1B]">
                     <SafeImage
                       src={normalizeImageUrl(prod.imageUrl)}
                       alt={prod.name}

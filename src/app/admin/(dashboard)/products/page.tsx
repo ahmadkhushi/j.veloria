@@ -15,6 +15,7 @@ import {
   Link2,
   Wand2,
   Image as ImageIcon,
+  Edit,
 } from 'lucide-react';
 
 interface ProductItem {
@@ -53,6 +54,22 @@ export default function AdminProductsPage() {
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [extractingLink, setExtractingLink] = useState(false);
   const [linkMessage, setLinkMessage] = useState<{ text: string; type: 'success' | 'error' | 'info' } | null>(null);
+
+  // Edit Form State
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editId, setEditId] = useState<number | null>(null);
+  const [editName, setEditName] = useState('');
+  const [editDepartment, setEditDepartment] = useState<'CLOTHES' | 'SHOES'>('CLOTHES');
+  const [editBrand, setEditBrand] = useState('J. VELORIA');
+  const [editPrice, setEditPrice] = useState('');
+  const [editSalePrice, setEditSalePrice] = useState('');
+  const [editImageUrl, setEditImageUrl] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [editIsFeatured, setEditIsFeatured] = useState(false);
+  const [editSelectedSizes, setEditSelectedSizes] = useState<string[]>([]);
+  const [editStock, setEditStock] = useState('50');
+  const [editExtractingLink, setEditExtractingLink] = useState(false);
+  const [editLinkMessage, setEditLinkMessage] = useState<{ text: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   const clothingSizes = ['S', 'M', 'L', 'XL', '2XL'];
   const shoeSizes = ['EU 39', 'EU 40', 'EU 41', 'EU 42', 'EU 43', 'EU 44'];
@@ -199,6 +216,118 @@ export default function AdminProductsPage() {
     } catch (err) {
       console.error('Error creating product:', err);
       alert('Error creating product.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const openEditModal = (p: ProductItem) => {
+    setEditId(p.id);
+    setEditName(p.name);
+    setEditDepartment((p.department as 'CLOTHES' | 'SHOES') || 'CLOTHES');
+    setEditBrand((p as any).brand || 'J. VELORIA');
+    setEditPrice(String(p.price || ''));
+    setEditSalePrice(p.salePrice ? String(p.salePrice) : '');
+    setEditImageUrl(p.imageUrl || '');
+    setEditDescription(p.description || '');
+    setEditIsFeatured(p.isFeatured ?? false);
+    setEditSelectedSizes(Array.isArray(p.availableSizes) ? p.availableSizes : []);
+    setEditStock(String(p.stock ?? 50));
+    setEditLinkMessage(null);
+    setShowEditModal(true);
+  };
+
+  const toggleEditSizeSelection = (sizeCode: string) => {
+    if (editSelectedSizes.includes(sizeCode)) {
+      setEditSelectedSizes(editSelectedSizes.filter((s) => s !== sizeCode));
+    } else {
+      setEditSelectedSizes([...editSelectedSizes, sizeCode]);
+    }
+  };
+
+  const handleEditExtractFromLink = async (overrideUrl?: string) => {
+    const targetUrl = overrideUrl || editImageUrl;
+    if (!targetUrl || !targetUrl.trim()) {
+      setEditLinkMessage({ text: 'Please enter or paste a product link / image URL.', type: 'error' });
+      return;
+    }
+
+    setEditExtractingLink(true);
+    setEditLinkMessage({ text: 'Extracting product picture & info from link...', type: 'info' });
+
+    try {
+      const res = await fetch('/api/admin/extract-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: targetUrl.trim() }),
+      });
+      const data = await res.json();
+
+      if (data.success && data.imageUrl) {
+        setEditImageUrl(data.imageUrl);
+
+        let msg = '✓ Product picture extracted successfully!';
+        if (data.title && !editName) {
+          setEditName(data.title);
+          msg += ' Title auto-filled.';
+        }
+        if (data.price && !editPrice) {
+          setEditPrice(data.price);
+          msg += ' Price auto-filled.';
+        }
+
+        setEditLinkMessage({ text: msg, type: 'success' });
+      } else {
+        setEditLinkMessage({
+          text: 'Could not extract image from web page. Using normalized link directly.',
+          type: 'info',
+        });
+        setEditImageUrl(normalizeImageUrl(targetUrl));
+      }
+    } catch (err) {
+      console.error('Error extracting image from link:', err);
+      setEditLinkMessage({ text: 'Failed to extract picture from link. Using direct URL.', type: 'error' });
+      setEditImageUrl(normalizeImageUrl(targetUrl));
+    } finally {
+      setEditExtractingLink(false);
+    }
+  };
+
+  const handleUpdateProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editId) return;
+    setSubmitting(true);
+    try {
+      const cleanImg = normalizeImageUrl(editImageUrl);
+      const res = await fetch('/api/admin/products', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: editId,
+          name: editName,
+          price: editPrice,
+          salePrice: editSalePrice || null,
+          department: editDepartment,
+          brand: editBrand,
+          imageUrl: cleanImg || 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=800&auto=format&fit=crop',
+          description: editDescription,
+          availableSizes: editSelectedSizes,
+          isFeatured: editIsFeatured,
+          stock: editStock,
+        }),
+      });
+
+      if (res.ok) {
+        setShowEditModal(false);
+        setEditId(null);
+        fetchProducts();
+      } else {
+        const errorData = await res.json();
+        alert(errorData.error || 'Failed to update product.');
+      }
+    } catch (err) {
+      console.error('Error updating product:', err);
+      alert('Error updating product.');
     } finally {
       setSubmitting(false);
     }
@@ -375,13 +504,22 @@ export default function AdminProductsPage() {
                       </button>
                     </td>
                     <td className="py-3.5 px-4">
-                      <button
-                        onClick={() => handleDeleteProduct(p.id)}
-                        className="p-1.5 text-slate-400 hover:text-red-400 transition-colors"
-                        title="Delete product"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => openEditModal(p)}
+                          className="p-1.5 text-amber-400/80 hover:text-amber-300 hover:bg-amber-400/10 rounded transition-colors"
+                          title="Edit product details"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteProduct(p.id)}
+                          className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded transition-colors"
+                          title="Delete product"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -638,6 +776,276 @@ export default function AdminProductsPage() {
               >
                 {submitting ? 'Publishing...' : 'Publish Product to Catalog'}
               </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Product Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-[#0A192F] border border-amber-500/30 p-6 md:p-8 max-w-2xl w-full text-white space-y-6 max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="flex justify-between items-center border-b border-white/10 pb-4">
+              <div className="flex items-center gap-2">
+                <Edit className="w-5 h-5 text-amber-400" />
+                <h3 className="font-serif text-lg font-bold uppercase tracking-wider text-amber-300">
+                  Edit Product #{editId}
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="text-slate-400 hover:text-white uppercase text-xs"
+              >
+                Close
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdateProduct} className="space-y-4">
+              <div>
+                <label className="block text-[11px] uppercase tracking-wider text-slate-400 mb-1">
+                  Product Title (Required)
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="w-full bg-[#020C1B] border border-white/20 p-3 text-xs text-white focus:outline-none"
+                />
+              </div>
+
+              {/* Side-Scroll Feature Checkbox */}
+              <div className="p-4 bg-[#020C1B] border border-amber-500/40 space-y-1">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={editIsFeatured}
+                    onChange={(e) => setEditIsFeatured(e.target.checked)}
+                    className="w-4 h-4 accent-amber-400 cursor-pointer"
+                  />
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-white uppercase tracking-wider">
+                    <Sparkles className="w-4 h-4 text-amber-400" />
+                    <span>Featured in Horizontal Side-Scroll Carousel Section</span>
+                  </div>
+                </label>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[11px] uppercase tracking-wider text-slate-400 mb-1">
+                    Department
+                  </label>
+                  <select
+                    value={editDepartment}
+                    onChange={(e) => {
+                      const dept = e.target.value as 'CLOTHES' | 'SHOES';
+                      setEditDepartment(dept);
+                      setEditSelectedSizes([]);
+                    }}
+                    className="w-full bg-[#020C1B] border border-white/20 p-3 text-xs text-white focus:outline-none"
+                  >
+                    <option value="CLOTHES">CLOTHES (Apparel)</option>
+                    <option value="SHOES">SHOES (Footwear)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] uppercase tracking-wider text-slate-400 mb-1">
+                    Brand Name
+                  </label>
+                  <input
+                    type="text"
+                    value={editBrand}
+                    onChange={(e) => setEditBrand(e.target.value)}
+                    className="w-full bg-[#020C1B] border border-white/20 p-3 text-xs text-white focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-[11px] uppercase tracking-wider text-slate-400 mb-1">
+                    Price (Rs.)
+                  </label>
+                  <input
+                    type="number"
+                    step="1"
+                    required
+                    value={editPrice}
+                    onChange={(e) => setEditPrice(e.target.value)}
+                    className="w-full bg-[#020C1B] border border-white/20 p-3 text-xs text-white focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] uppercase tracking-wider text-slate-400 mb-1">
+                    Sale Price (Rs.)
+                  </label>
+                  <input
+                    type="number"
+                    step="1"
+                    value={editSalePrice}
+                    onChange={(e) => setEditSalePrice(e.target.value)}
+                    placeholder="Optional"
+                    className="w-full bg-[#020C1B] border border-white/20 p-3 text-xs text-white focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] uppercase tracking-wider text-slate-400 mb-1">
+                    Stock Inventory
+                  </label>
+                  <input
+                    type="number"
+                    step="1"
+                    value={editStock}
+                    onChange={(e) => setEditStock(e.target.value)}
+                    className="w-full bg-[#020C1B] border border-white/20 p-3 text-xs text-white focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Available Sizes Multi-Select */}
+              <div>
+                <label className="block text-[11px] uppercase tracking-wider text-slate-400 mb-1.5">
+                  Available Sizes ({editDepartment})
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {(editDepartment === 'CLOTHES' ? clothingSizes : shoeSizes).map((sz) => {
+                    const isSelected = editSelectedSizes.includes(sz);
+                    return (
+                      <button
+                        key={sz}
+                        type="button"
+                        onClick={() => toggleEditSizeSelection(sz)}
+                        className={`px-3 py-1.5 text-xs font-mono font-bold uppercase transition-all border ${
+                          isSelected
+                            ? 'bg-amber-400 text-[#0A192F] border-amber-300 shadow-md'
+                            : 'bg-[#020C1B] text-slate-400 border-white/20 hover:text-white'
+                        }`}
+                      >
+                        {sz} {isSelected && '✓'}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Image Input with Extract from Link button */}
+              <div className="space-y-2">
+                <label className="block text-[11px] uppercase tracking-wider text-slate-400">
+                  Product Image Link / URL
+                </label>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <input
+                    type="text"
+                    required
+                    value={editImageUrl}
+                    onChange={(e) => {
+                      setEditImageUrl(e.target.value);
+                      if (editLinkMessage) setEditLinkMessage(null);
+                    }}
+                    placeholder="Paste direct picture URL or store product web page link..."
+                    className="flex-1 bg-[#020C1B] border border-white/20 p-3 text-xs text-white focus:outline-none focus:border-amber-400"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleEditExtractFromLink()}
+                    disabled={editExtractingLink}
+                    className="px-4 py-3 bg-amber-400 hover:bg-amber-300 text-[#0A192F] font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors"
+                  >
+                    {editExtractingLink ? (
+                      <>
+                        <RefreshCw className="w-3.5 h-3.5 animate-spin" /> Extracting...
+                      </>
+                    ) : (
+                      <>
+                        <Wand2 className="w-3.5 h-3.5" /> Auto-Extract
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {editLinkMessage && (
+                  <div
+                    className={`p-2.5 text-xs border ${
+                      editLinkMessage.type === 'success'
+                        ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-200'
+                        : editLinkMessage.type === 'error'
+                        ? 'bg-red-950/60 border-red-500/40 text-red-200'
+                        : 'bg-blue-950/60 border-blue-500/40 text-blue-200'
+                    }`}
+                  >
+                    {editLinkMessage.text}
+                  </div>
+                )}
+
+                {/* Live Image Preview */}
+                {editImageUrl && (
+                  <div className="mt-2 p-2 bg-[#0A192F] border border-white/10 flex items-center gap-3">
+                    <div className="relative w-16 h-20 bg-[#020C1B] border border-white/10 flex-shrink-0 overflow-hidden">
+                      <img
+                        src={normalizeImageUrl(editImageUrl)}
+                        alt="Image preview"
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                          const sibling = (e.target as HTMLImageElement).nextElementSibling as HTMLElement;
+                          if (sibling) sibling.style.display = 'flex';
+                        }}
+                        onLoad={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'block';
+                          const sibling = (e.target as HTMLImageElement).nextElementSibling as HTMLElement;
+                          if (sibling) sibling.style.display = 'none';
+                        }}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="w-full h-full bg-red-900/30 border border-red-500/30 hidden items-center justify-center text-center p-1">
+                        <span className="text-[9px] text-red-400">❌ Failed to load</span>
+                      </div>
+                    </div>
+
+                    <div className="text-[10px] text-slate-300 space-y-1">
+                      <p className="text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                        Picture Preview Ready
+                      </p>
+                      <p className="text-slate-400 line-clamp-1 break-all text-[9px] font-mono">
+                        {normalizeImageUrl(editImageUrl)}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-[11px] uppercase tracking-wider text-slate-400 mb-1">
+                  Description
+                </label>
+                <textarea
+                  rows={3}
+                  value={editDescription}
+                  onChange={(e) => setEditDescription(e.target.value)}
+                  className="w-full bg-[#020C1B] border border-white/20 p-3 text-xs text-white focus:outline-none"
+                />
+              </div>
+
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="flex-1 py-3.5 bg-amber-400 text-[#0A192F] font-bold text-xs uppercase tracking-wider hover:bg-amber-300 transition-colors shadow-lg"
+                >
+                  {submitting ? 'Saving Changes...' : 'Save Product Updates'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="px-6 py-3.5 bg-white/10 text-white font-bold text-xs uppercase tracking-wider hover:bg-white/20 transition-colors border border-white/20"
+                >
+                  Cancel
+                </button>
+              </div>
             </form>
           </div>
         </div>
