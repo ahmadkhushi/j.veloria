@@ -71,7 +71,7 @@ export default async function ClothesHubPage({ searchParams }: SearchParamsProps
       orderBy,
     });
   } catch (error) {
-    console.error('Database query error on ClothesHubPage:', error);
+    console.error("DB_FETCH_ERROR (ClothesHubPage):", error);
   }
 
   if (sizeFilter && products.length > 0) {

@@ -71,7 +71,7 @@ export default async function ShoesHubPage({ searchParams }: SearchParamsProps) 
       orderBy,
     });
   } catch (error) {
-    console.error('Database query error on ShoesHubPage:', error);
+    console.error("DB_FETCH_ERROR (ShoesHubPage):", error);
   }
 
   if (sizeFilter && products.length > 0) {

@@ -31,7 +31,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       });
     }
   } catch (error) {
-    console.error('Database error in ProductPage:', error);
+    console.error("DB_FETCH_ERROR (ProductPage):", error);
   }
 
   if (!product || !product.isActive) {

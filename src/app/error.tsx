@@ -11,8 +11,10 @@ export default function GlobalErrorPage({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  console.error("DB_FETCH_ERROR:", error);
+
   useEffect(() => {
-    console.error('App Router Navigation Error:', error);
+    console.error("DB_FETCH_ERROR:", error);
   }, [error]);
 
   return (

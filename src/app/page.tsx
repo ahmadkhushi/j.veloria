@@ -17,6 +17,7 @@ async function getFeaturedSideScrollProducts() {
     });
     return products;
   } catch (e) {
+    console.error("DB_FETCH_ERROR (HomePage Featured):", e);
     return [];
   }
 }
@@ -30,6 +31,7 @@ async function getAllProducts() {
     });
     return products;
   } catch (e) {
+    console.error("DB_FETCH_ERROR (HomePage All):", e);
     return [];
   }
 }
