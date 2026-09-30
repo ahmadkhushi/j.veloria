@@ -70,7 +70,7 @@ export function SideScrollCarousel({ products }: { products: SideScrollProduct[]
       {/* Horizontal Scrollable Container */}
       <div
         ref={scrollRef}
-        className="flex gap-6 overflow-x-auto scrollbar-none snap-x snap-mandatory py-4 px-1 scroll-smooth preserve-3d"
+        className="flex gap-6 overflow-x-auto scrollbar-none snap-x snap-mandatory py-4 px-1 scroll-smooth"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {products.map((prod) => {
@@ -79,7 +79,7 @@ export function SideScrollCarousel({ products }: { products: SideScrollProduct[]
             <Link
               key={prod.id}
               href={`/product/${prod.slug}`}
-              className="flex-shrink-0 w-64 md:w-72 bg-[#0A192F] border border-white/10 flex flex-col justify-between group snap-start card-3d shimmer-3d transform-gpu cursor-pointer hover:border-white/30 transition-all duration-300"
+              className="flex-shrink-0 w-64 md:w-72 bg-[#0A192F] border border-white/10 flex flex-col justify-between group snap-start cursor-pointer hover:border-white/30 hover:-translate-y-1 transition-all duration-300 shadow-xl"
             >
               <div>
                 {/* Full Size Carousel Product Image Size (h-72 sm:h-84 md:h-[360px]) */}
@@ -90,19 +90,19 @@ export function SideScrollCarousel({ products }: { products: SideScrollProduct[]
                     alt={prod.name}
                     referrerPolicy="no-referrer"
                     onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.png'; }}
-                    className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700 ease-out"
+                    className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500 ease-out"
                   />
-                  <div className="absolute top-2.5 left-2.5 bg-[#020C1B]/90 border border-white/20 text-white text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider layer-depth-1 shadow-lg">
+                  <div className="absolute top-2.5 left-2.5 bg-[#020C1B]/90 border border-white/20 text-white text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider shadow-lg">
                     {prod.department}
                   </div>
                   {prod.salePrice && (
-                    <div className="absolute top-2.5 right-2.5 bg-white text-[#0A192F] text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider layer-depth-1 shadow-lg">
+                    <div className="absolute top-2.5 right-2.5 bg-white text-[#0A192F] text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider shadow-lg">
                       Sale
                     </div>
                   )}
                 </div>
 
-                <div className="p-4 space-y-2 layer-depth-1">
+                <div className="p-4 space-y-2">
                   <p className="text-[10px] uppercase tracking-widest text-slate-400 font-semibold">{prod.brand}</p>
                   <h3 className="font-serif text-sm font-semibold text-white group-hover:text-amber-300 transition-colors line-clamp-1">
                     {prod.name}
@@ -130,7 +130,7 @@ export function SideScrollCarousel({ products }: { products: SideScrollProduct[]
                 </div>
               </div>
 
-              <div className="p-4 pt-0 layer-depth-2">
+              <div className="p-4 pt-0">
                 <span
                   className="w-full flex items-center justify-center py-2 bg-white/10 border border-white/20 text-white font-semibold text-xs uppercase tracking-widest group-hover:bg-white group-hover:text-[#0A192F] transition-all duration-300 shadow-md group-hover:shadow-xl"
                 >

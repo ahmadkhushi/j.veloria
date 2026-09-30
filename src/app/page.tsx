@@ -80,27 +80,27 @@ export default async function HomePage() {
           <div className="w-16 h-0.5 bg-white mx-auto mt-4 shadow-[0_0_10px_rgba(255,255,255,0.5)]"></div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 preserve-3d">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Clothes Hub Card */}
           <Link
             href="/clothes"
-            className="block group relative h-[400px] overflow-hidden border border-white/10 bg-[#0A192F] card-3d shimmer-3d shadow-2xl cursor-pointer"
+            className="block group relative h-[400px] overflow-hidden border border-white/10 bg-[#0A192F] shadow-2xl cursor-pointer transition-all duration-300 hover:border-white/30"
           >
             <img
               src="https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=1000&auto=format&fit=crop"
               alt="J. VELORIA Clothes Collection"
-              className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-110 group-hover:rotate-1 transition-transform duration-700 ease-out"
+              className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-700 ease-out"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#020C1B] via-[#020C1B]/40 to-transparent"></div>
-            <div className="absolute inset-0 p-8 flex flex-col justify-end text-white space-y-3 layer-depth-2">
+            <div className="absolute inset-0 p-8 flex flex-col justify-end text-white space-y-3">
               <span className="text-xs uppercase tracking-[0.3em] text-slate-300 font-medium">Ready-to-Wear Apparel</span>
               <h3 className="text-2xl md:text-3xl font-serif uppercase tracking-wider text-white group-hover:text-amber-300 transition-colors">The Clothes Hub</h3>
               <p className="text-xs text-slate-300 max-w-md leading-relaxed">
                 Tailored suits, evening tuxedos, silk dress shirts, and cashmere outerwear ready for immediate wear.
               </p>
-              <div className="pt-2 layer-depth-3">
+              <div className="pt-2">
                 <span
-                  className="inline-flex items-center gap-3 px-6 py-3 bg-white text-[#0A192F] font-semibold text-xs uppercase tracking-widest group-hover:bg-slate-200 transition-all duration-300 shadow-xl group-hover:shadow-[0_10px_25px_rgba(255,255,255,0.2)] group-hover:-translate-y-1 transform-gpu"
+                  className="inline-flex items-center gap-3 px-6 py-3 bg-white text-[#0A192F] font-semibold text-xs uppercase tracking-widest group-hover:bg-slate-200 transition-all duration-300 shadow-xl group-hover:shadow-[0_10px_25px_rgba(255,255,255,0.2)]"
                 >
                   Explore Clothes <ArrowRight className="w-4 h-4" />
                 </span>
@@ -111,23 +111,23 @@ export default async function HomePage() {
           {/* Shoes Hub Card */}
           <Link
             href="/shoes"
-            className="block group relative h-[400px] overflow-hidden border border-white/10 bg-[#0A192F] card-3d shimmer-3d shadow-2xl cursor-pointer"
+            className="block group relative h-[400px] overflow-hidden border border-white/10 bg-[#0A192F] shadow-2xl cursor-pointer transition-all duration-300 hover:border-white/30"
           >
             <img
               src="https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?q=80&w=1000&auto=format&fit=crop"
               alt="J. VELORIA Footwear Collection"
-              className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-110 group-hover:rotate-1 transition-transform duration-700 ease-out"
+              className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-700 ease-out"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#020C1B] via-[#020C1B]/40 to-transparent"></div>
-            <div className="absolute inset-0 p-8 flex flex-col justify-end text-white space-y-3 layer-depth-2">
+            <div className="absolute inset-0 p-8 flex flex-col justify-end text-white space-y-3">
               <span className="text-xs uppercase tracking-[0.3em] text-slate-300 font-medium">Savoir-Faire Footwear</span>
               <h3 className="text-2xl md:text-3xl font-serif uppercase tracking-wider text-white group-hover:text-amber-300 transition-colors">The Shoes Hub</h3>
               <p className="text-xs text-slate-300 max-w-md leading-relaxed">
                 Hand-stained calfskin oxfords, Tuscan suede loafers, and Goodyear-welted dress boots.
               </p>
-              <div className="pt-2 layer-depth-3">
+              <div className="pt-2">
                 <span
-                  className="inline-flex items-center gap-3 px-6 py-3 bg-white text-[#0A192F] font-semibold text-xs uppercase tracking-widest group-hover:bg-slate-200 transition-all duration-300 shadow-xl group-hover:shadow-[0_10px_25px_rgba(255,255,255,0.2)] group-hover:-translate-y-1 transform-gpu"
+                  className="inline-flex items-center gap-3 px-6 py-3 bg-white text-[#0A192F] font-semibold text-xs uppercase tracking-widest group-hover:bg-slate-200 transition-all duration-300 shadow-xl group-hover:shadow-[0_10px_25px_rgba(255,255,255,0.2)]"
                 >
                   Explore Shoes <ArrowRight className="w-4 h-4" />
                 </span>
@@ -137,8 +137,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 5. Regular Catalog Grid with 3D Depth Card Animations */}
-      <section className="max-w-7xl mx-auto px-4 md:px-8 perspective-container">
+      {/* 5. Regular Catalog Grid */}
+      <section className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
           <div>
             <span className="text-xs uppercase tracking-[0.3em] text-slate-400 font-light">Complete Catalog</span>
@@ -152,14 +152,14 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4 md:gap-6 preserve-3d">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4 md:gap-6">
           {regularProducts.map((prod) => {
             const sizes = Array.isArray(prod.availableSizes) ? (prod.availableSizes as string[]) : [];
             return (
               <Link
                 key={prod.id}
                 href={`/product/${prod.slug}`}
-                className="group bg-[#0A192F] border border-white/10 flex flex-col justify-between card-3d shimmer-3d transform-gpu shadow-xl cursor-pointer hover:border-white/30 transition-all duration-300"
+                className="group bg-[#0A192F] border border-white/10 flex flex-col justify-between shadow-xl cursor-pointer hover:border-white/30 hover:-translate-y-1 transition-all duration-300"
               >
                 <div>
                   <div className="relative h-52 sm:h-72 md:h-80 lg:h-[360px] w-full overflow-hidden bg-[#020C1B]">
@@ -167,14 +167,14 @@ export default async function HomePage() {
                       src={normalizeImageUrl(prod.imageUrl)}
                       alt={prod.name}
                       referrerPolicy="no-referrer"
-                      className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700 ease-out"
+                      className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500 ease-out"
                     />
-                    <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 bg-[#020C1B]/90 border border-white/20 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 uppercase tracking-wider layer-depth-1 shadow-lg">
+                    <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 bg-[#020C1B]/90 border border-white/20 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 uppercase tracking-wider shadow-lg">
                       {prod.department}
                     </div>
                   </div>
 
-                  <div className="p-2.5 sm:p-4 space-y-1.5 sm:space-y-2 layer-depth-1">
+                  <div className="p-2.5 sm:p-4 space-y-1.5 sm:space-y-2">
                     <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-slate-400 font-semibold">{prod.brand}</p>
                     <h3 className="font-serif text-xs sm:text-sm font-semibold text-white group-hover:text-amber-300 transition-colors line-clamp-1">
                       {prod.name}
@@ -206,7 +206,7 @@ export default async function HomePage() {
                   </div>
                 </div>
 
-                <div className="p-2.5 sm:p-4 pt-0 layer-depth-2">
+                <div className="p-2.5 sm:p-4 pt-0">
                   <span
                     className="w-full flex items-center justify-center gap-1.5 py-1.5 sm:py-2 bg-white/10 border border-white/20 text-white font-semibold text-[10px] sm:text-xs uppercase tracking-widest group-hover:bg-white group-hover:text-[#0A192F] transition-all duration-300 shadow-md group-hover:shadow-xl"
                   >

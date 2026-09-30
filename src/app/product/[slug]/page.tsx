@@ -114,7 +114,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 <Link
                   key={prod.id}
                   href={`/product/${prod.slug}`}
-                  className="group bg-[#0A192F] border border-white/10 flex flex-col justify-between card-3d shimmer-3d transform-gpu shadow-xl cursor-pointer hover:border-white/30 transition-all duration-300"
+                  className="group bg-[#0A192F] border border-white/10 flex flex-col justify-between shadow-xl cursor-pointer hover:border-white/30 hover:-translate-y-1 transition-all duration-300"
                 >
                   <div>
                     <div className="relative h-52 sm:h-72 md:h-80 lg:h-[320px] w-full overflow-hidden bg-[#020C1B]">
