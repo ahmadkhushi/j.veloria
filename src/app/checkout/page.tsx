@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/lib/cart-store';
 import { ShieldCheck, Truck, Lock, CreditCard, Banknote } from 'lucide-react';
-import Image from 'next/image';
+import { normalizeImageUrl } from '@/lib/image-helper';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -219,7 +219,13 @@ export default function CheckoutPage() {
             {items.map((item) => (
               <div key={`${item.id}-${item.selectedSize}`} className="flex items-center gap-3 border-b border-white/5 pb-3">
                 <div className="relative w-14 h-16 bg-[#020C1B] flex-shrink-0">
-                  <Image src={item.imageUrl || '/placeholder.png'} alt={item.name} fill className="object-cover" />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={normalizeImageUrl(item.imageUrl) || '/placeholder.png'}
+                    alt={item.name}
+                    className="object-cover w-full h-full"
+                    onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.png'; }}
+                  />
                 </div>
                 <div className="flex-1 text-xs">
                   <p className="font-serif font-semibold text-white line-clamp-1">{item.name}</p>

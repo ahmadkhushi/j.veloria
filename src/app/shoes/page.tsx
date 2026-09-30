@@ -16,11 +16,20 @@ interface SearchParamsProps {
 }
 
 export default async function ShoesHubPage({ searchParams }: SearchParamsProps) {
-  const params = await searchParams;
-  const categoryFilter = params.category || '';
-  const sizeFilter = params.size || '';
-  const sortFilter = params.sort || 'newest';
-  const searchQuery = params.search || '';
+  let categoryFilter = '';
+  let sizeFilter = '';
+  let sortFilter = 'newest';
+  let searchQuery = '';
+
+  try {
+    const params = (await searchParams) || {};
+    categoryFilter = params.category || '';
+    sizeFilter = params.size || '';
+    sortFilter = params.sort || 'newest';
+    searchQuery = params.search || '';
+  } catch (e) {
+    // fallback gracefully
+  }
 
   // Build query filter
   const whereCondition: any = {
@@ -191,10 +200,10 @@ export default async function ShoesHubPage({ searchParams }: SearchParamsProps) 
                     )}
 
                     <div className="flex items-baseline gap-1.5 sm:gap-2 pt-0.5">
-                      <span className="font-serif text-sm sm:text-base font-bold text-white">Rs. {prod.price.toLocaleString()}</span>
-                      {prod.salePrice && (
-                        <span className="text-[10px] sm:text-xs text-slate-500 line-through">Rs. {prod.salePrice.toLocaleString()}</span>
-                      )}
+                      <span className="font-serif text-sm sm:text-base font-bold text-white">Rs. {(prod.price || 0).toLocaleString()}</span>
+                      {prod.salePrice ? (
+                        <span className="text-[10px] sm:text-xs text-slate-500 line-through">Rs. {(prod.salePrice || 0).toLocaleString()}</span>
+                      ) : null}
                     </div>
                   </div>
                 </div>

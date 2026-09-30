@@ -25,23 +25,24 @@ async function getDynamicPages() {
       where: {
         isPublished: true,
         showInHeader: true,
-        // Exclude any page whose slug or title contains "admin" — at the DB level
-        // so it never reaches the UI regardless of component-level filters.
-        NOT: [
-          { slug: { in: ['atelier-craftsmanship', 'heritage-craftsmanship'] } },
-          { title: { contains: 'Craftsmanship' } },
-          { title: { contains: 'ATELIER' } },
-          { slug: { contains: 'admin' } },
-          { title: { contains: 'admin' } },
-          { title: { contains: 'Admin' } },
-          { title: { contains: 'ADMIN' } },
-        ],
       },
       select: { id: true, title: true, slug: true },
       orderBy: { sortOrder: 'asc' },
     });
-    return pages;
+
+    if (!Array.isArray(pages)) return [];
+
+    return pages.filter(
+      (p) =>
+        p &&
+        p.slug &&
+        !p.slug.includes('admin') &&
+        !p.title.toLowerCase().includes('admin') &&
+        !p.title.toLowerCase().includes('craftsmanship') &&
+        !p.title.toLowerCase().includes('atelier')
+    );
   } catch (error) {
+    console.error('Error fetching dynamic header pages:', error);
     return [];
   }
 }
