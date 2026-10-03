@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { normalizeImageUrl } from '@/lib/image-helper';
 
 export interface SideScrollProduct {
@@ -18,58 +18,23 @@ export interface SideScrollProduct {
 }
 
 export function SideScrollCarousel({ products }: { products: SideScrollProduct[] }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  const scrollLeft = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -320, behavior: 'smooth' });
-    }
-  };
-
-  const scrollRight = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 320, behavior: 'smooth' });
-    }
-  };
-
   if (products.length === 0) return null;
 
   return (
     <section className="max-w-7xl mx-auto px-4 md:px-8 py-8 space-y-6 perspective-container">
-      {/* Header with Navigation Controls */}
-      <div className="flex items-end justify-between border-b border-white/10 pb-4">
-        <div>
-          <div className="flex items-center gap-2 text-white text-xs uppercase tracking-[0.25em] font-semibold mb-1">
-            <Sparkles className="w-3.5 h-3.5 text-white" />
-            <span>Curated Ready-to-Wear</span>
-          </div>
-          <h2 className="text-2xl md:text-3xl font-serif text-white uppercase tracking-wider">
-            The Signature Edit
-          </h2>
+      {/* Header */}
+      <div className="border-b border-white/10 pb-4">
+        <div className="flex items-center gap-2 text-white text-xs uppercase tracking-[0.25em] font-semibold mb-1">
+          <Sparkles className="w-3.5 h-3.5 text-white" />
+          <span>Curated Ready-to-Wear</span>
         </div>
-
-        {/* Carousel Arrow Controls */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={scrollLeft}
-            className="p-2.5 bg-[#0A192F] border border-white/20 text-white hover:bg-white hover:text-[#0A192F] transition-all duration-300 hover:shadow-[0_0_15px_rgba(255,255,255,0.2)]"
-            title="Scroll Left"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <button
-            onClick={scrollRight}
-            className="p-2.5 bg-[#0A192F] border border-white/20 text-white hover:bg-white hover:text-[#0A192F] transition-all duration-300 hover:shadow-[0_0_15px_rgba(255,255,255,0.2)]"
-            title="Scroll Right"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
+        <h2 className="text-2xl md:text-3xl font-serif text-white uppercase tracking-wider">
+          The Signature Edit
+        </h2>
       </div>
 
       {/* Horizontal Scrollable Container */}
       <div
-        ref={scrollRef}
         className="flex gap-6 overflow-x-auto scrollbar-none snap-x snap-mandatory py-4 px-1 scroll-smooth"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
