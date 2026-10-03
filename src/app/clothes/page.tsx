@@ -37,15 +37,31 @@ export default async function ClothesHubPage({ searchParams }: SearchParamsProps
     department: 'CLOTHES',
   };
 
+  const CLOTHES_CATEGORIES = [
+    { name: 'Baggy', slug: 'baggy' },
+    { name: 'Cargo', slug: 'cargo' },
+    { name: 'Plain', slug: 'plain' },
+    { name: 'Shorts', slug: 'shorts' },
+  ];
+
   if (categoryFilter) {
-    whereCondition.category = { slug: categoryFilter };
+    whereCondition.OR = [
+      { category: { slug: categoryFilter.toLowerCase() } },
+      { category: { name: { contains: categoryFilter } } },
+      { name: { contains: categoryFilter } },
+      { description: { contains: categoryFilter } },
+    ];
   }
 
   if (searchQuery) {
-    whereCondition.OR = [
-      { name: { contains: searchQuery } },
-      { description: { contains: searchQuery } },
-      { keywords: { contains: searchQuery } },
+    whereCondition.AND = [
+      {
+        OR: [
+          { name: { contains: searchQuery } },
+          { description: { contains: searchQuery } },
+          { keywords: { contains: searchQuery } },
+        ],
+      },
     ];
   }
 
@@ -53,14 +69,10 @@ export default async function ClothesHubPage({ searchParams }: SearchParamsProps
   if (sortFilter === 'price_asc') orderBy = { price: 'asc' };
   if (sortFilter === 'price_desc') orderBy = { price: 'desc' };
 
-  let categories: any[] = [];
   let clothingSizes: any[] = [];
   let products: any[] = [];
 
   try {
-    categories = await prisma.category.findMany({
-      where: { department: 'CLOTHES' },
-    });
     clothingSizes = await prisma.sizeOption.findMany({
       where: { type: 'CLOTHING', isActive: true },
       orderBy: { sortOrder: 'asc' },
@@ -88,7 +100,7 @@ export default async function ClothesHubPage({ searchParams }: SearchParamsProps
         <span className="text-xs uppercase tracking-[0.3em] text-slate-400 font-light">Ready-to-Wear Luxury</span>
         <h1 className="text-3xl md:text-5xl font-serif text-white uppercase tracking-wider">The Clothes Hub</h1>
         <p className="text-xs md:text-sm text-slate-300 max-w-2xl mx-auto leading-relaxed">
-          Premium ready-to-wear tailored suits, evening tuxedos, silk shirts, and cashmere outerwear.
+          Explore our signature ready-to-wear apparel across Baggy, Cargo, Plain, and Shorts collections.
         </p>
       </div>
 
@@ -105,12 +117,12 @@ export default async function ClothesHubPage({ searchParams }: SearchParamsProps
           >
             All Clothes ({products.length})
           </Link>
-          {categories.map((cat) => (
+          {CLOTHES_CATEGORIES.map((cat) => (
             <Link
-              key={cat.id}
+              key={cat.slug}
               href={`/clothes?category=${cat.slug}${sizeFilter ? `&size=${sizeFilter}` : ''}`}
               className={`px-4 py-2 text-xs uppercase tracking-wider font-semibold border transition-all ${
-                categoryFilter === cat.slug
+                categoryFilter.toLowerCase() === cat.slug
                   ? 'bg-white text-[#0A192F] border-white'
                   : 'bg-[#0A192F] text-slate-300 border-white/10 hover:border-white/30'
               }`}

@@ -42,9 +42,14 @@ export default function AdminProductsPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
+  // Sub-category maps
+  const CLOTHES_SUBCATEGORIES = ['Baggy', 'Cargo', 'Plain', 'Shorts'];
+  const SHOES_SUBCATEGORIES = ['Sneakers', 'Formals', 'Loafers', 'Sandals', 'Boots', 'Sports'];
+
   // Form State
   const [name, setName] = useState('');
   const [department, setDepartment] = useState<'CLOTHES' | 'SHOES'>('CLOTHES');
+  const [subCategory, setSubCategory] = useState('Baggy');
   const [brand, setBrand] = useState('J. VELORIA');
   const [price, setPrice] = useState('');
   const [salePrice, setSalePrice] = useState('');
@@ -60,6 +65,7 @@ export default function AdminProductsPage() {
   const [editId, setEditId] = useState<number | null>(null);
   const [editName, setEditName] = useState('');
   const [editDepartment, setEditDepartment] = useState<'CLOTHES' | 'SHOES'>('CLOTHES');
+  const [editSubCategory, setEditSubCategory] = useState('Baggy');
   const [editBrand, setEditBrand] = useState('J. VELORIA');
   const [editPrice, setEditPrice] = useState('');
   const [editSalePrice, setEditSalePrice] = useState('');
@@ -191,6 +197,7 @@ export default function AdminProductsPage() {
           price,
           salePrice: salePrice || null,
           department,
+          subCategory,
           brand,
           imageUrl: cleanImg || 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=800&auto=format&fit=crop',
           description,
@@ -208,6 +215,7 @@ export default function AdminProductsPage() {
         setDescription('');
         setSelectedSizes([]);
         setIsFeatured(false);
+        setSubCategory('Baggy');
         fetchProducts();
       } else {
         const errorData = await res.json();
@@ -224,7 +232,15 @@ export default function AdminProductsPage() {
   const openEditModal = (p: ProductItem) => {
     setEditId(p.id);
     setEditName(p.name);
-    setEditDepartment((p.department as 'CLOTHES' | 'SHOES') || 'CLOTHES');
+    const dept = (p.department as 'CLOTHES' | 'SHOES') || 'CLOTHES';
+    setEditDepartment(dept);
+    // Pre-fill sub-category from existing category name, or default
+    const existingCat = p.category?.name || '';
+    if (dept === 'CLOTHES') {
+      setEditSubCategory(CLOTHES_SUBCATEGORIES.includes(existingCat) ? existingCat : 'Baggy');
+    } else {
+      setEditSubCategory(SHOES_SUBCATEGORIES.includes(existingCat) ? existingCat : 'Sneakers');
+    }
     setEditBrand((p as any).brand || 'J. VELORIA');
     setEditPrice(String(p.price || ''));
     setEditSalePrice(p.salePrice ? String(p.salePrice) : '');
@@ -308,6 +324,7 @@ export default function AdminProductsPage() {
           price: editPrice,
           salePrice: editSalePrice || null,
           department: editDepartment,
+          subCategory: editSubCategory,
           brand: editBrand,
           imageUrl: cleanImg || 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=800&auto=format&fit=crop',
           description: editDescription,
@@ -583,7 +600,7 @@ export default function AdminProductsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[11px] uppercase tracking-wider text-slate-400 mb-1">
-                    Department
+                    Step 1 — Department
                   </label>
                   <select
                     value={department}
@@ -591,6 +608,7 @@ export default function AdminProductsPage() {
                       const dept = e.target.value as 'CLOTHES' | 'SHOES';
                       setDepartment(dept);
                       setSelectedSizes([]);
+                      setSubCategory(dept === 'CLOTHES' ? 'Baggy' : 'Sneakers');
                     }}
                     className="w-full bg-[#020C1B] border border-white/20 p-3 text-xs text-white focus:outline-none"
                   >
@@ -600,16 +618,31 @@ export default function AdminProductsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] uppercase tracking-wider text-slate-400 mb-1">
-                    Brand Name
+                  <label className="block text-[11px] uppercase tracking-wider text-amber-300 mb-1 font-bold">
+                    Step 2 — Sub-Category
                   </label>
-                  <input
-                    type="text"
-                    value={brand}
-                    onChange={(e) => setBrand(e.target.value)}
-                    className="w-full bg-[#020C1B] border border-white/20 p-3 text-xs text-white focus:outline-none"
-                  />
+                  <select
+                    value={subCategory}
+                    onChange={(e) => setSubCategory(e.target.value)}
+                    className="w-full bg-[#020C1B] border border-amber-400/40 p-3 text-xs text-white focus:outline-none focus:border-amber-400"
+                  >
+                    {(department === 'CLOTHES' ? CLOTHES_SUBCATEGORIES : SHOES_SUBCATEGORIES).map((sc) => (
+                      <option key={sc} value={sc}>{sc}</option>
+                    ))}
+                  </select>
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] uppercase tracking-wider text-slate-400 mb-1">
+                  Brand Name
+                </label>
+                <input
+                  type="text"
+                  value={brand}
+                  onChange={(e) => setBrand(e.target.value)}
+                  className="w-full bg-[#020C1B] border border-white/20 p-3 text-xs text-white focus:outline-none"
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -833,7 +866,7 @@ export default function AdminProductsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[11px] uppercase tracking-wider text-slate-400 mb-1">
-                    Department
+                    Step 1 — Department
                   </label>
                   <select
                     value={editDepartment}
@@ -841,6 +874,7 @@ export default function AdminProductsPage() {
                       const dept = e.target.value as 'CLOTHES' | 'SHOES';
                       setEditDepartment(dept);
                       setEditSelectedSizes([]);
+                      setEditSubCategory(dept === 'CLOTHES' ? 'Baggy' : 'Sneakers');
                     }}
                     className="w-full bg-[#020C1B] border border-white/20 p-3 text-xs text-white focus:outline-none"
                   >
@@ -850,16 +884,31 @@ export default function AdminProductsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] uppercase tracking-wider text-slate-400 mb-1">
-                    Brand Name
+                  <label className="block text-[11px] uppercase tracking-wider text-amber-300 mb-1 font-bold">
+                    Step 2 — Sub-Category
                   </label>
-                  <input
-                    type="text"
-                    value={editBrand}
-                    onChange={(e) => setEditBrand(e.target.value)}
-                    className="w-full bg-[#020C1B] border border-white/20 p-3 text-xs text-white focus:outline-none"
-                  />
+                  <select
+                    value={editSubCategory}
+                    onChange={(e) => setEditSubCategory(e.target.value)}
+                    className="w-full bg-[#020C1B] border border-amber-400/40 p-3 text-xs text-white focus:outline-none focus:border-amber-400"
+                  >
+                    {(editDepartment === 'CLOTHES' ? CLOTHES_SUBCATEGORIES : SHOES_SUBCATEGORIES).map((sc) => (
+                      <option key={sc} value={sc}>{sc}</option>
+                    ))}
+                  </select>
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] uppercase tracking-wider text-slate-400 mb-1">
+                  Brand Name
+                </label>
+                <input
+                  type="text"
+                  value={editBrand}
+                  onChange={(e) => setEditBrand(e.target.value)}
+                  className="w-full bg-[#020C1B] border border-white/20 p-3 text-xs text-white focus:outline-none"
+                />
               </div>
 
               <div className="grid grid-cols-3 gap-4">

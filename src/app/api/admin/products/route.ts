@@ -41,6 +41,8 @@ export async function POST(req: Request) {
       brand,
       department,
       categoryId,
+      categoryName,
+      subCategory,
       availableSizes,
       stock,
       isFeatured,
@@ -64,6 +66,32 @@ export async function POST(req: Request) {
         Math.floor(Math.random() * 10000);
 
     let cleanImageUrl = normalizeImageUrl(imageUrl);
+
+    // Resolve Category ID from categoryName/subCategory if needed
+    let finalCategoryId = categoryId ? parseInt(categoryId) : null;
+    const targetCatName = categoryName || subCategory;
+    if (targetCatName && typeof targetCatName === 'string') {
+      const cleanCatName = targetCatName.trim();
+      const catSlug = cleanCatName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      let cat = await prisma.category.findFirst({
+        where: {
+          OR: [
+            { slug: catSlug },
+            { name: { equals: cleanCatName } }
+          ]
+        }
+      });
+      if (!cat) {
+        cat = await prisma.category.create({
+          data: {
+            name: cleanCatName,
+            slug: catSlug,
+            department: department || 'CLOTHES',
+          }
+        });
+      }
+      finalCategoryId = cat.id;
+    }
 
     // If cleanImageUrl still looks like a web page link (e.g. HTML product page link), try to resolve to direct image
     if (cleanImageUrl && cleanImageUrl.startsWith('http')) {
@@ -113,7 +141,7 @@ export async function POST(req: Request) {
         videoUrl,
         brand: brand || 'J. VELORIA',
         department: department || 'CLOTHES',
-        categoryId: categoryId ? parseInt(categoryId) : null,
+        categoryId: finalCategoryId,
         availableSizes: availableSizes || [],
         stock: parseInt(stock || '50'),
         isFeatured: isFeatured ?? false,
@@ -147,6 +175,8 @@ export async function PUT(req: Request) {
       brand,
       department,
       categoryId,
+      categoryName,
+      subCategory,
       availableSizes,
       stock,
       isFeatured,
@@ -170,7 +200,33 @@ export async function PUT(req: Request) {
     if (videoUrl !== undefined) updateData.videoUrl = videoUrl;
     if (brand !== undefined) updateData.brand = brand;
     if (department !== undefined) updateData.department = department;
-    if (categoryId !== undefined) updateData.categoryId = categoryId ? parseInt(categoryId) : null;
+
+    const targetCatName = categoryName || subCategory;
+    if (targetCatName && typeof targetCatName === 'string') {
+      const cleanCatName = targetCatName.trim();
+      const catSlug = cleanCatName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      let cat = await prisma.category.findFirst({
+        where: {
+          OR: [
+            { slug: catSlug },
+            { name: { equals: cleanCatName } }
+          ]
+        }
+      });
+      if (!cat) {
+        cat = await prisma.category.create({
+          data: {
+            name: cleanCatName,
+            slug: catSlug,
+            department: department || updateData.department || 'CLOTHES',
+          }
+        });
+      }
+      updateData.categoryId = cat.id;
+    } else if (categoryId !== undefined) {
+      updateData.categoryId = categoryId ? parseInt(categoryId) : null;
+    }
+
     if (availableSizes !== undefined) updateData.availableSizes = availableSizes;
     if (stock !== undefined) updateData.stock = parseInt(stock);
     if (isFeatured !== undefined) updateData.isFeatured = Boolean(isFeatured);
