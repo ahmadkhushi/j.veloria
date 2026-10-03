@@ -220,7 +220,7 @@ export default async function ClothesHubPage({ searchParams }: SearchParamsProps
                   <span
                     className="w-full flex items-center justify-center gap-1 py-1.5 sm:py-2 bg-white/10 border border-white/20 text-white font-semibold text-[10px] sm:text-xs uppercase tracking-widest group-hover:bg-white group-hover:text-[#0A192F] transition-all"
                   >
-                    Select Size & Purchase
+                    See Details
                   </span>
                 </div>
               </Link>
