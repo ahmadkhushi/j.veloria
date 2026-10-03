@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCartStore } from '@/lib/cart-store';
 import { ShoppingBag, Check, ShieldCheck, Truck, RotateCcw, Info, Film } from 'lucide-react';
 import Link from 'next/link';
@@ -33,6 +33,11 @@ export function ProductDetailClient({ product }: { product: ProductProps }) {
   const [added, setAdded] = useState<boolean>(false);
 
   const { addItem } = useCartStore();
+
+  // Auto-scroll to top on every product page visit (fixes client-side nav not resetting scroll)
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [product.slug]);
 
   const handleAddToCart = () => {
     if (!selectedSize && sizes.length > 0) {

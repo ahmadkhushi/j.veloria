@@ -23,7 +23,7 @@ export function PublicLayout({ children, dynamicPages }: PublicLayoutProps) {
     <>
       <Header dynamicPages={dynamicPages} />
       <CartDrawer />
-      <main className="flex-1 pt-[108px]">
+      <main className="flex-1 pt-[120px]">
         {children}
       </main>
       <WhatsAppFloat />
