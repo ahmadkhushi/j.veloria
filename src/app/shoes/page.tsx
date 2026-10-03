@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { normalizeImageUrl } from '@/lib/image-helper';
 import { SafeImage } from '@/components/common/SafeImage';
+import { ShoesFilterBar } from '@/components/shop/ShoesFilterBar';
 
 export const revalidate = 60;
 
@@ -92,56 +93,14 @@ export default async function ShoesHubPage({ searchParams }: SearchParamsProps) 
         </p>
       </div>
 
-      {/* Category Pills & Filters */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-6">
-        <div className="flex flex-wrap items-center gap-2">
-          <Link
-            href="/shoes"
-            className={`px-4 py-2 text-xs uppercase tracking-wider font-semibold border transition-all ${
-              !categoryFilter
-                ? 'bg-white text-[#0A192F] border-white'
-                : 'bg-[#0A192F] text-slate-300 border-white/10 hover:border-white/30'
-            }`}
-          >
-            All Footwear ({products.length})
-          </Link>
-          {categories.map((cat) => (
-            <Link
-              key={cat.id}
-              href={`/shoes?category=${cat.slug}${sizeFilter ? `&size=${sizeFilter}` : ''}`}
-              className={`px-4 py-2 text-xs uppercase tracking-wider font-semibold border transition-all ${
-                categoryFilter === cat.slug
-                  ? 'bg-white text-[#0A192F] border-white'
-                  : 'bg-[#0A192F] text-slate-300 border-white/10 hover:border-white/30'
-              }`}
-            >
-              {cat.name}
-            </Link>
-          ))}
-        </div>
-
-        {/* Shoe Size Filter */}
-        <div className="flex items-center gap-2 text-xs">
-          <span className="text-slate-400 uppercase tracking-wider">EU Size:</span>
-          <div className="flex flex-wrap gap-1">
-            <Link
-              href={`/shoes${categoryFilter ? `?category=${categoryFilter}` : ''}`}
-              className={`px-2 py-1 text-[11px] border ${!sizeFilter ? 'bg-white text-[#0A192F]' : 'border-white/10 text-slate-400'}`}
-            >
-              All
-            </Link>
-            {shoeSizes.map((s) => (
-              <Link
-                key={s.id}
-                href={`/shoes?size=${s.code}${categoryFilter ? `&category=${categoryFilter}` : ''}`}
-                className={`px-2 py-1 text-[11px] border ${sizeFilter === s.code ? 'bg-white text-[#0A192F]' : 'border-white/10 text-slate-400'}`}
-              >
-                {s.code}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
+      {/* Category Pills & Optimistic Size Filters */}
+      <ShoesFilterBar
+        categories={categories}
+        shoeSizes={shoeSizes}
+        initialCategory={categoryFilter}
+        initialSize={sizeFilter}
+        totalCount={products.length}
+      />
 
       {/* Product Grid (Compact h-52 Image Height) */}
       {products.length === 0 ? (
